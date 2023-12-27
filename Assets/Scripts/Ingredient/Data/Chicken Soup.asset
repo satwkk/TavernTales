@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cf9979ef344f3a49a076ff029a77de6, type: 3}
+  m_Name: Chicken Soup
+  m_EditorClassIdentifier: 
+  name: Chicken Soup
+  requiredFoods:
+  - {fileID: 4124312778119444919, guid: d5b80bd7f120cb94786520358ed35825, type: 3}
+  - {fileID: 3195257824349162321, guid: 66ffff5ba74c686449f7060aa94c3bc2, type: 3}
+  - {fileID: 6713582139175858878, guid: c78397c50169e6a49a28aec466c93ad6, type: 3}
+  prepareDuration: 50
+  isPrepared: 0
