@@ -1,8 +1,9 @@
 using LHC.Globals;
 using UnityEngine;
 using UnityEngine.AI;
+using LHC.Customer.StateMachine;
 
-namespace LHC.Customer.StateMachine
+namespace LHC.Customer
 {
     public enum CustomerType
     {
@@ -32,6 +33,9 @@ namespace LHC.Customer.StateMachine
         public WanderState m_WanderState;
         public ApproachShopState m_ApproachShopState;
         public OrderFoodState m_OrderState;
+
+        // GETTERS
+        public CustomerData GetCustomerData() { return m_CustomerData; }
 
         private void Awake()
         {

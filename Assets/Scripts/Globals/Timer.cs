@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace LHC.Globals
 {
-
     class Timer
     {
         private float m_Threshold;

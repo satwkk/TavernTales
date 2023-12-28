@@ -19,6 +19,20 @@ public class IngredientSpawner : MonoBehaviour {
         }
     }
 
+    public static IngredientSpawner Instance { get; set; }
+
+    private void Awake()
+    {
+        if ( Instance == null )
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy( gameObject );
+        }
+    }
+
     public Ingredient CreateIngredient() {
         var ingredientSO = m_AvailableIngredients[UnityEngine.Random.Range(0, m_AvailableIngredients.Count)];
         Ingredient ingredient = new Ingredient(ingredientSO);

@@ -18,7 +18,7 @@ namespace LHC.Customer.StateMachine {
         {
             m_WanderData = new WanderData();
             m_WanderData.wanderSpeed = 2f;
-            m_WanderData.wanderRadius = 10f;
+            m_WanderData.wanderRadius = 50f;
         }
 
         public override void OnEnter()
@@ -48,6 +48,7 @@ namespace LHC.Customer.StateMachine {
                     return true;
                 }
             }
+            Debug.Log( "We hit something that is not navigable" );
             return false;
         }
 
@@ -70,7 +71,7 @@ namespace LHC.Customer.StateMachine {
 
         private bool CheckForObstacle()
         {
-            if ( Physics.Raycast(m_Customer.transform.position, m_Customer.transform.forward, out RaycastHit hitInfo, 2f) )
+            if ( Physics.Raycast( m_Customer.transform.position, m_Customer.transform.forward, out RaycastHit hitInfo, 2f ) )
             {
                 Debug.DrawLine( m_Customer.transform.position, hitInfo.point );
                 return true;
