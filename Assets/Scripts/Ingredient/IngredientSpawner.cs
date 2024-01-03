@@ -36,6 +36,7 @@ public class IngredientSpawner : MonoBehaviour {
     public Ingredient CreateIngredient() {
         var ingredientSO = m_AvailableIngredients[UnityEngine.Random.Range(0, m_AvailableIngredients.Count)];
         Ingredient ingredient = new Ingredient(ingredientSO);
+        OnIngredientCreate_Event?.Invoke( ingredient );
         return ingredient;
     }
 }

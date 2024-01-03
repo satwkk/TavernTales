@@ -16,8 +16,6 @@ public class PlayerController : MonoBehaviour {
 
     InputManager m_InputManager;
 
-    PlayerFoodManager m_FoodManager;
-
     [SerializeField] Transform m_CameraHolder;
 
     [Header("PLAYER SETTINGS")]

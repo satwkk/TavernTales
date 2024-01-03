@@ -8,5 +8,6 @@ namespace LHC.Customer.StateMachine
         void OnEnter();
         void OnTick();
         void OnExit();
+        void SwitchState(IState newState);
     }
 }

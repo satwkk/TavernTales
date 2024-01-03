@@ -12,14 +12,14 @@ GameObject:
   - component: {fileID: 8354966771932389568}
   - component: {fileID: 2161734383813688655}
   - component: {fileID: 1770255660678638358}
-  - component: {fileID: 8533868671829566416}
+  - component: {fileID: 5127870080548669954}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3314897964855844374
 Transform:
   m_ObjectHideFlags: 0
@@ -92,7 +92,7 @@ MonoBehaviour:
     requiredFoods: []
     prepareDuration: 0
     isPrepared: 0
---- !u!114 &8533868671829566416
+--- !u!114 &5127870080548669954
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,15 +101,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 8208346924252542483}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a90d2a373ab1404c91e77e748744860, type: 3}
+  m_Script: {fileID: 11500000, guid: b5750f667185eea439e715affe5952a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CustomerPrefab: {fileID: 4385653503403914921, guid: f0a805fab6a28614499c428ad8098e4f,
-    type: 3}
-  m_SpawnPoints:
+  approachShopWayPoint:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  m_SpawnAmount: 1
+  - {fileID: 0}
+  leaveShopWayPoint:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  orderFoodWayPoint_1:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  orderFoodWayPoint_2:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

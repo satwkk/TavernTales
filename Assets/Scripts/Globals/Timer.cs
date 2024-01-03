@@ -36,6 +36,7 @@ namespace LHC.Globals
                 yield return new WaitForSeconds( 1f );
             }
             OnTimerComplete?.Invoke();
+            yield return null;
         }
     }
 }

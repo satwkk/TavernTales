@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LHC.Customer.StateMachine
@@ -25,6 +27,81 @@ namespace LHC.Customer.StateMachine
             m_Customer.m_CustomerData.currentState.OnExit();
             m_Customer.m_CustomerData.currentState = newState;
             m_Customer.m_CustomerData.currentState.OnEnter();
+        }
+
+
+        protected delegate void OnMovedToPosition();
+        protected void MoveTo(Vector3 position, float speed, OnMovedToPosition after = null)
+        {
+            if (HasReachedTargetPosition(position))
+            {
+                after?.Invoke();
+                return;
+            }
+
+            var motion = ( position - m_Customer.transform.position ).normalized;
+            m_Customer.m_CharacterController.Move(motion * speed * Time.deltaTime);
+        }
+
+        protected delegate void OnRotationFinish();
+        protected void LookAt(Quaternion rotation, float speed, OnRotationFinish after = null)
+        {
+            if ( m_Customer.transform.rotation == rotation )
+            {
+                after?.Invoke();
+            }
+
+            m_Customer.transform.rotation = Quaternion.Slerp(m_Customer.transform.rotation, rotation, speed * Time.deltaTime);
+        }
+
+
+        protected IEnumerator FollowWayPoints(List<WayPoint> wayPoints, Action after = null) 
+        {
+            int currentIndex = 0;
+            WayPoint currentWayPoint;
+            while (currentIndex < wayPoints.Count)
+            {
+                currentWayPoint = wayPoints[currentIndex];
+
+                // MODIFY THE Y AXIS TO ALIGN WITH PLAYER OR ELSE THE PLAYER WILL START WALKING IN AIR
+                var currentWayPointFinalPos = currentWayPoint.transform.position;
+                currentWayPointFinalPos.y = m_Customer.transform.position.y;
+
+                // ROTATE TOWARDS THE WAYPOINT
+                var turnRotation = GetDirectionWayPoint(currentWayPoint);
+
+                while (Vector3.SqrMagnitude(m_Customer.transform.position - currentWayPointFinalPos) > 0.2f * 0.2f)
+                {
+                    LookAt(turnRotation, m_CustomerData.locomotionData.rotationSpeed);
+                    MoveTo( currentWayPointFinalPos, m_CustomerData.locomotionData.walkSpeed );
+                    yield return null;
+                }
+                currentIndex++;
+            }
+
+            // CALLBACK AFTER CUSTOMER HAS REACHED THE FINAL WAYPOINT 
+            Debug.Log("Reached the last waypoint");
+            after?.Invoke();
+            yield return null;
+        }
+
+        protected Quaternion GetDirectionWayPoint(WayPoint wayPoint) 
+        {
+            var dirToWaypoint = (wayPoint.transform.position - m_Customer.transform.position).normalized;
+            var targetAngle = 90 - Mathf.Atan2(dirToWaypoint.z, dirToWaypoint.x) * Mathf.Rad2Deg;
+            return Quaternion.Euler(Vector3.up * targetAngle);
+        }
+
+        protected float GetDirectionWayPointAngle(WayPoint wayPoint) 
+        {
+            var dirToWaypoint = (wayPoint.transform.position - m_Customer.transform.position).normalized;
+            var targetAngle = 90 - Mathf.Atan2(dirToWaypoint.z, dirToWaypoint.x) * Mathf.Rad2Deg;
+            return targetAngle;
+        }
+
+        private bool HasReachedTargetPosition( Vector3 targetPos )
+        {
+            return Vector3.SqrMagnitude( m_Customer.transform.position - targetPos ) < 0.2f * 0.2f;
         }
     }
 }

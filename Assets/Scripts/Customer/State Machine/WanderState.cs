@@ -1,40 +1,55 @@
-using System;
-using System.Collections;
-using LHC.Globals;
 using UnityEngine;
 
 namespace LHC.Customer.StateMachine {
-    public struct WanderData
-    {
-        public float wanderSpeed;
-        public float wanderRadius;
-    }
 
     public class WanderState : BaseState
     {
-        private WanderData m_WanderData;
+        private Vector3 m_WanderTargetPos;
+        private bool m_CanWander = false;
 
         public WanderState( Customer controller, CustomerData customerData ) : base( controller, customerData )
         {
-            m_WanderData = new WanderData();
-            m_WanderData.wanderSpeed = 2f;
-            m_WanderData.wanderRadius = 50f;
         }
 
         public override void OnEnter()
         {
             Debug.Log( "Entering wander state" );
-            var randomPos = UnityEngine.Random.insideUnitSphere * m_WanderData.wanderRadius;
+            m_Customer.GetAnimationManager().PlayWalkingAnimation(true);
+            m_WanderTargetPos = GetRandomCoordInAgentRadius();
+            m_CanWander = IsNavigable(m_WanderTargetPos);
+
+            // If the random coord in not navigable simply go back to idle state and try again
+            if (!m_CanWander)
+            {
+                SwitchState(m_Customer.m_IdleState);
+            }
+        }
+
+        public override void OnTick()
+        {
+            if (m_CanWander)
+            {
+                CheckForObstacle();
+                LookAt(Quaternion.LookRotation(m_WanderTargetPos - m_Customer.transform.position), m_CustomerData.locomotionData.rotationSpeed);
+                MoveTo(m_WanderTargetPos, m_CustomerData.locomotionData.walkSpeed, () => {
+                    SwitchState(m_Customer.m_IdleState);
+                });
+            }
+        }
+
+        public override void OnExit()
+        {
+            m_CanWander = false;
+            m_WanderTargetPos = Vector3.zero;
+            m_Customer.GetAnimationManager().PlayWalkingAnimation(false);
+        }
+
+        private Vector3 GetRandomCoordInAgentRadius()
+        {
+            var randomPos = UnityEngine.Random.insideUnitSphere * m_CustomerData.locomotionData.wanderRadius;
             var targetPos = m_Customer.transform.position + randomPos;
             targetPos.y = m_Customer.transform.position.y;
-            if (IsNavigable(targetPos))
-            {
-                m_Customer.StartCoroutine( StartWandering( targetPos ) );
-            }
-            else
-            {
-                SwitchState( m_Customer.m_IdleState );
-            }
+            return targetPos;
         }
 
         private bool IsNavigable(Vector3 coord)
@@ -52,39 +67,13 @@ namespace LHC.Customer.StateMachine {
             return false;
         }
 
-        IEnumerator StartWandering(Vector3 targetPos )
-        {
-            var targetRot = Quaternion.LookRotation( ( targetPos - m_Customer.transform.position ) );
-            m_Customer.transform.rotation = targetRot;
-            while ( m_Customer.transform.position != targetPos)
-            {
-                if ( CheckForObstacle() )
-                {
-                    break;
-                }
-
-                m_Customer.transform.position = Vector3.MoveTowards( m_Customer.transform.position, targetPos, 2f * Time.deltaTime );
-                yield return null;
-            }
-            SwitchState( m_Customer.m_IdleState );
-        }
-
-        private bool CheckForObstacle()
+        private void CheckForObstacle()
         {
             if ( Physics.Raycast( m_Customer.transform.position, m_Customer.transform.forward, out RaycastHit hitInfo, 2f ) )
             {
-                Debug.DrawLine( m_Customer.transform.position, hitInfo.point );
-                return true;
+                m_CanWander = false;
+                SwitchState(m_Customer.m_IdleState);
             }
-            return false;
-        }
-
-        public override void OnExit()
-        {
-        }
-
-        public override void OnTick()
-        {
         }
     }
 }

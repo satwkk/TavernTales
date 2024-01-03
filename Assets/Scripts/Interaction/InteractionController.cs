@@ -1,48 +1,81 @@
+using System;
 using UnityEngine;
 
-public class InteractionController : MonoBehaviour, IFoodCharacter {
+public class InteractionController : MonoBehaviour, IFoodOrderService, IPickableActor
+{
 
     private InputManager m_InputManager;
-    private InteractablePickup m_CurrentPickup;
-    private PlayerFoodManager m_FoodManager;
+
+    [Header("Interaction Settings")]
+    [Space()]
     private Vector3 m_TraceStartPos;
     private Vector3 m_TraceEndPos;
-    public Transform m_TargetTraceTransform;
-    public Camera m_PlayerCamera;
-    public float m_TraceRange = 20.0f;
+    [SerializeField] private Transform m_TargetTraceTransform;
+    [SerializeField] private Camera m_PlayerCamera;
+    [SerializeField] private float m_TraceRange = 20.0f;
 
     [Header("Pickup Settings")]
-    public Transform m_PickupHolder;
+    [SerializeField] private Transform m_PickupHolder;
+    public Transform PickupHolder { get => m_PickupHolder; set => m_PickupHolder = value; }
+
+
+    [Header( "Pickup References" )]
+    [Space()]
+    [SerializeField] private InteractableBase m_CurrentInteractable;
+    [SerializeField] private InteractablePickup m_CurrentPickup;
+    [SerializeField] private Food m_CurrentPickupFood;
+
+    // EVENTS
+    public Action<Food> OnPickFood_Event { get; set; }
 
     private void Awake() {
         m_InputManager = GetComponent<InputManager>();
-        m_FoodManager = GetComponent<PlayerFoodManager>();
     }
 
-    private void Update() {
-        if (m_InputManager.isInteractPressed) {
+    private void Start()
+    {
+        Food.OnPickup += PickupFood;
+    }
+
+    private void Update() 
+    {
+        if (m_InputManager.isInteractPressed) 
+        {
             TraceForInteractables();
         }
     }
     private void OnDrawGizmos() {
         Debug.DrawLine(m_TraceStartPos, m_TraceEndPos, Color.red);
     }
-    public PlayerFoodManager GetPlayerFoodManager() => m_FoodManager;
 
-    private void TraceForInteractables() {
+    private void TraceForInteractables() 
+    {
         m_TraceStartPos = m_PlayerCamera.ScreenToWorldPoint(m_TargetTraceTransform.position);
         m_TraceEndPos = m_TraceStartPos + m_PlayerCamera.transform.forward * m_TraceRange;
-        if (Physics.Raycast(m_TraceStartPos, m_PlayerCamera.transform.forward, out RaycastHit hitInfo, m_TraceRange)) {
+        if (Physics.Raycast(m_TraceStartPos, m_PlayerCamera.transform.forward, out RaycastHit hitInfo, m_TraceRange)) 
+        {
             var interactable = hitInfo.collider.GetComponent<InteractableBase>();
-            if (interactable != null) {
-                interactable.Interact(this);
+            if (interactable != null) 
+            {
+                m_CurrentInteractable = interactable;
+                m_CurrentInteractable.Interact(this);
             }
+            else
+            {
+                m_CurrentInteractable = null;
+            }
+        }
+        else
+        {
+            m_CurrentInteractable = null;
         }
     }
 
-    public void PickupItem(InteractablePickup pickup) {
+    public void PickupItem(InteractablePickup pickup) 
+    {
         // IF PLAYER HAS FOOD IN HANDS, HE CANNOT PICKUP ANYTHING ELSE
-        if (m_CurrentPickup != null) {
+        if (HasPickupInHands()) 
+        {
             Debug.LogError("Player already has something in his hand, cannot pickup anything else");
             return;
         }
@@ -51,16 +84,40 @@ public class InteractionController : MonoBehaviour, IFoodCharacter {
         m_CurrentPickup.transform.SetParent(m_PickupHolder.transform);
     }
 
-    public void DropItem() {
+    public void DropItem(InteractablePickup pickup) {
         if (m_CurrentPickup == null) {
             Debug.LogError("Player does not have any pickup in hands");
             return;
         }
+
+        if (m_CurrentPickup != pickup)
+        {
+            Debug.LogError("[BUG] You are trying to throw something that is not in your hands.");
+            return;
+        }
+        
         m_CurrentPickup.transform.SetParent(null);
         m_CurrentPickup = null;
     }
 
-    public Food GetFoodInHands() {
-        return m_FoodManager.GetCurrentFood();
+    public Vector3 GetInteractionPosition()
+    {
+        return transform.position;
+    }
+
+    public bool HasPickupInHands()
+    {
+        return m_CurrentPickup != null;
+    }
+
+    public Food GetFoodInHands()
+    {
+        return m_CurrentPickupFood;
+    }
+
+    public void PickupFood( Food food )
+    {
+        m_CurrentPickupFood = food;
+        OnPickFood_Event?.Invoke( food );
     }
 }

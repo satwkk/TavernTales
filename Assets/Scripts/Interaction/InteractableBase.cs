@@ -1,8 +1,10 @@
 using UnityEngine;
 
-public class InteractableBase : MonoBehaviour {
+
+public class InteractableBase : MonoBehaviour
+{
 
     // TODO: Change the InteractionController to something abstract
-    public virtual void Interact(InteractionController interactingActor) {
-    }
+    public virtual void Interact( IInteractionActor interactingActor ) { }
+
 }

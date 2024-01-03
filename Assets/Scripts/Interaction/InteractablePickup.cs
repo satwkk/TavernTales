@@ -1,38 +1,35 @@
 using UnityEngine;
 
-public class InteractablePickup : InteractableBase {
+public class InteractablePickup : InteractableBase
+{
 
     Vector3 initialLocation;
 
-    // CHANGE THIS TO SOMETHING MORE ABSTRACT
-    protected InteractionController m_Owner;
+    protected IPickableActor m_PickupActor;
 
-    public void Start() {
+    public void Start()
+    {
         initialLocation = transform.position;
     }
 
-    public override void Interact(InteractionController interactingActor) {
-        m_Owner = interactingActor;
-        m_Owner.PickupItem(this);
+    public override void Interact( IInteractionActor pickupActor )
+    {
+        m_PickupActor = pickupActor as IPickableActor;
+        m_PickupActor?.PickupItem( this );
     }
 
-    public void SetOwner(InteractionController ownerController) {
-        if (m_Owner != null) {
-            Debug.LogError("Owner is already assigned");
-            return;
-        }
-        m_Owner = ownerController;
+    public virtual void Use() 
+    {
     }
 
-    public virtual void Use() {
-    }
-
-    public void Drop() {
-        if (m_Owner == null) {
+    public void Drop() 
+    {
+        if (m_PickupActor == null) 
+        {
             Debug.LogError("This item is not picked up by anyone, this is prolly a BUG.");
             return;
         }
-        m_Owner.DropItem();
-        m_Owner = null;
+        m_PickupActor.DropItem(this);
+        m_PickupActor = null;
     }
 }

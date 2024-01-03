@@ -8,7 +8,8 @@ public struct IngredientData {
     public string name;
     public List<Food> requiredFoods;
     public float prepareDuration;
-    public bool isPrepared;
+    public bool isServed;
+    public bool canServe;
 
     public bool HasFoodInRequiredItems(Food food) {
         foreach (var f in requiredFoods) {

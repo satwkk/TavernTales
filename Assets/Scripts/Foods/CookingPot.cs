@@ -92,11 +92,19 @@ public class CookingPot : InteractableBase {
         OnIngredientCookFail_Event?.Invoke();
     }
 
-    public override void Interact(InteractionController interactingActor) {
-        Interact(interactingActor);
+    public override void Interact( IInteractionActor interactingActor )
+    {
+        var foodService = interactingActor as IFoodOrderService;
+        if (foodService == null)
+        {
+            Debug.Log( "The interacting actor is not an IFoodOrderService" );
+            return;
+        }
+
+        Interact( interactingActor  );
     }
 
-    public void Interact(IFoodCharacter foodCharacter) {
+    public void Interact(IFoodOrderService foodCharacter) {
         if (!HasIngredientToCook()) {
             Debug.LogError("You have not accepted any order to cook");
             return;
