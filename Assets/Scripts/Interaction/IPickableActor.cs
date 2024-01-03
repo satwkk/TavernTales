@@ -6,6 +6,6 @@ public interface IPickableActor : IInteractionActor {
     public Transform PickupHolder { get; set; }
 
     public bool HasPickupInHands();
-    public void PickupItem(InteractablePickup pickup);
-    public void DropItem(InteractablePickup pickup);
+    public void PickupItem(InteractableBase pickup);
+    public void DropItem(InteractableBase pickup);
 }

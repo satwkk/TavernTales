@@ -1,7 +1,9 @@
 using System;
 using UnityEngine;
 
-public class Food : InteractablePickup {
+// public class Food : InteractablePickup {
+public class Food : InteractableBase 
+{
 
     public FoodSO m_FoodData;
     private MeshRenderer m_Renderer;
@@ -16,16 +18,15 @@ public class Food : InteractablePickup {
 
     public override void Interact( IInteractionActor interactingActor ) 
     {
-        base.Interact(interactingActor);
         var foodService = interactingActor as IFoodOrderService;
-        foodService.PickupFood( this );
+        foodService.PickupFood(this);
     }
 
-    public override void Use() 
-    {
-        // WE CAN CALL THE DROP FUNCTION FROM BASE CALL WHICH WILL SET THE CURRENT ITEM TO NULL AND UNPARENT IT FROM THE PLAYER
-        base.Drop();
-        m_Renderer.enabled = false;
-        m_Collider.enabled = false;
-    }
+    // public override void Use() 
+    // {
+    //     // WE CAN CALL THE DROP FUNCTION FROM BASE CALL WHICH WILL SET THE CURRENT ITEM TO NULL AND UNPARENT IT FROM THE PLAYER
+    //     base.Drop();
+    //     m_Renderer.enabled = false;
+    //     m_Collider.enabled = false;
+    // }
 }

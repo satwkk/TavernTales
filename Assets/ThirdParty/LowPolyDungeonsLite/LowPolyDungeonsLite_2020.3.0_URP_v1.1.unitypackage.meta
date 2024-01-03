@@ -5,6 +5,7 @@ DefaultImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+<<<<<<< Updated upstream
 AssetOrigin:
   serializedVersion: 1
   productId: 177937
@@ -12,3 +13,5 @@ AssetOrigin:
   packageVersion: 1.1
   assetPath: Assets/LowPolyDungeonsLite/LowPolyDungeonsLite_2020.3.0_URP_v1.1.unitypackage
   uploadId: 510693
+=======
+>>>>>>> Stashed changes

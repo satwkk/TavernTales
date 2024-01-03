@@ -71,7 +71,7 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
         }
     }
 
-    public void PickupItem(InteractablePickup pickup) 
+    public void PickupItem(InteractableBase pickup) 
     {
         // IF PLAYER HAS FOOD IN HANDS, HE CANNOT PICKUP ANYTHING ELSE
         if (HasPickupInHands()) 
@@ -79,25 +79,25 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
             Debug.LogError("Player already has something in his hand, cannot pickup anything else");
             return;
         }
-        m_CurrentPickup = pickup;
-        m_CurrentPickup.transform.position = m_PickupHolder.position;
-        m_CurrentPickup.transform.SetParent(m_PickupHolder.transform);
+        m_CurrentInteractable = pickup;
+        m_CurrentInteractable.transform.position = PickupHolder.position;
+        m_CurrentInteractable.transform.SetParent(PickupHolder);
     }
 
-    public void DropItem(InteractablePickup pickup) {
-        if (m_CurrentPickup == null) {
+    public void DropItem(InteractableBase pickup) {
+        if (m_CurrentInteractable == null) {
             Debug.LogError("Player does not have any pickup in hands");
             return;
         }
 
-        if (m_CurrentPickup != pickup)
+        if (m_CurrentInteractable != pickup)
         {
             Debug.LogError("[BUG] You are trying to throw something that is not in your hands.");
             return;
         }
         
-        m_CurrentPickup.transform.SetParent(null);
-        m_CurrentPickup = null;
+        m_CurrentInteractable.transform.SetParent(null);
+        m_CurrentInteractable = null;
     }
 
     public Vector3 GetInteractionPosition()
@@ -117,7 +117,14 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
 
     public void PickupFood( Food food )
     {
+        if (m_CurrentPickupFood != null) 
+        {
+            Debug.LogError("Already has a food in hand");
+            return;
+        }
+
         m_CurrentPickupFood = food;
-        OnPickFood_Event?.Invoke( food );
+        PickupItem(m_CurrentPickupFood);
+        OnPickFood_Event?.Invoke( m_CurrentPickupFood );
     }
 }

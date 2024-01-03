@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IFoodOrderService 
+public interface IFoodOrderService
 {
     public Action<Food> OnPickFood_Event { get; set; }
 

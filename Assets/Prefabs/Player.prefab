@@ -216,8 +216,7 @@ GameObject:
   - component: {fileID: 5672550348093928764}
   - component: {fileID: 2773414597126890330}
   - component: {fileID: 3552996195090122508}
-  - component: {fileID: 5217934044222860070}
-  - component: {fileID: 593949076605974182}
+  - component: {fileID: 4662407518302770559}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -363,7 +362,10 @@ MonoBehaviour:
   m_PlayerCamera: {fileID: 2490927799662436563}
   m_TraceRange: 20
   m_PickupHolder: {fileID: 309707727785516349}
---- !u!114 &5217934044222860070
+  m_CurrentInteractable: {fileID: 0}
+  m_CurrentPickup: {fileID: 0}
+  m_CurrentPickupFood: {fileID: 0}
+--- !u!114 &4662407518302770559
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -372,29 +374,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 8110604210643298402}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 549bb69c1f903f34d976e18ae8ab5ffc, type: 3}
+  m_Script: {fileID: 11500000, guid: afa6d16af7850234692b6ec14e2d1ddb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Food: {fileID: 0}
---- !u!114 &593949076605974182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8110604210643298402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ba71f2d8dfd57f42b8839a51fba759d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_CurrentIngredientData:
-    currentIngredient:
+  m_CurrentOrderData:
+    ingredientToCook:
       m_IngredientData:
         name: 
         requiredFoods: []
         prepareDuration: 0
-        isPrepared: 0
-    prepationDurationLeft: 0
-    foodsLeftForIngredient: 0
-  m_CookingPot: {fileID: 0}
+        isServed: 0
+        canServe: 0
+    foodsLeftToCompleteOrder: 0
+  m_PickedFood: {fileID: 0}

@@ -63,14 +63,12 @@ MonoBehaviour:
   ingredientDurationUI: {fileID: 0}
   remainingDuration: {fileID: 0}
   m_CurrentIngredientData:
-    currentIngredient:
-      m_IngredientData:
-        name: 
-        requiredFoods: []
-        prepareDuration: 0
-        isPrepared: 0
-    prepationDurationLeft: 0
-    foodsLeftForIngredient: 0
+    m_IngredientData:
+      name: 
+      requiredFoods: []
+      prepareDuration: 0
+      isServed: 0
+      canServe: 0
 --- !u!114 &1770255660678638358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,13 +83,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AvailableIngredients:
   - name: Soup
-    requiredFoods: []
+    requiredFoods:
+    - {fileID: 3195257824349162321, guid: 66ffff5ba74c686449f7060aa94c3bc2, type: 3}
+    - {fileID: 4124312778119444919, guid: d5b80bd7f120cb94786520358ed35825, type: 3}
+    prepareDuration: 5
+    isServed: 0
+    canServe: 0
+  - name: Chicken Soup
+    requiredFoods:
+    - {fileID: 3195257824349162321, guid: 66ffff5ba74c686449f7060aa94c3bc2, type: 3}
+    - {fileID: 4124312778119444919, guid: d5b80bd7f120cb94786520358ed35825, type: 3}
+    - {fileID: 6713582139175858878, guid: c78397c50169e6a49a28aec466c93ad6, type: 3}
     prepareDuration: 0
-    isPrepared: 0
-  - name: 
-    requiredFoods: []
-    prepareDuration: 0
-    isPrepared: 0
+    isServed: 0
+    canServe: 0
 --- !u!114 &5127870080548669954
 MonoBehaviour:
   m_ObjectHideFlags: 0

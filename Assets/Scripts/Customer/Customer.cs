@@ -43,7 +43,7 @@ namespace LHC.Customer
         public IState currentState;
     }
 
-    [RequireComponent(typeof(CharacterController), typeof(CustomerAnimationManager))]
+    [RequireComponent(typeof(CharacterController), typeof(CustomerAnimationManager), typeof(CustomerOrderManager))]
     public class Customer : MonoBehaviour, IInteractionActor
     {
         public CustomerData m_CustomerData;
@@ -100,11 +100,6 @@ namespace LHC.Customer
             }
         }
 
-        private void OnReachOrderingZone_Callback()
-        {
-            m_CustomerData.currentIngredient = IngredientSpawner.Instance.CreateIngredient();
-        }
-
         public bool HasOrderedIngredient()
         {
             return m_CustomerData.currentIngredient != null;
@@ -131,13 +126,10 @@ namespace LHC.Customer
 
         private void OnEnable()
         {
-            m_OrderState.OnReachOrderingZone_Event += OnReachOrderingZone_Callback;
         }
 
         private void OnDisable()
         {
-            m_OrderState.OnReachOrderingZone_Event -= OnReachOrderingZone_Callback;
-            
         }
     }
 }

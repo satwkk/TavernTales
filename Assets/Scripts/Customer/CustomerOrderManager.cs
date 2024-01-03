@@ -1,3 +1,4 @@
+using LHC.Globals;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ public class CustomerOrderManager : MonoBehaviour
     {
         m_OrderedFood = ingredient;
         OnFoodOrdered_Event?.Invoke( m_OrderedFood );
-        StartCoroutine( StartServingWaitTimer() );
+        // StartCoroutine( StartServingWaitTimer() );
     }
 
     private IEnumerator StartServingWaitTimer()
@@ -29,13 +30,5 @@ public class CustomerOrderManager : MonoBehaviour
         {
             Debug.Log( "Food was not served, customer is angry" );
         }
-    }
-
-    void Start()
-    {
-    }
-
-    void Update()
-    {
     }
 }

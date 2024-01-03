@@ -8,7 +8,6 @@ namespace LHC.Customer.StateMachine
     {
         private bool m_HasReachedOrderingZone;
         private Ingredient m_FoodToOrder;
-        public Action OnReachOrderingZone_Event;
 
         public OrderFoodState( Customer controller, CustomerData customerData ) : base( controller, customerData )
         {
