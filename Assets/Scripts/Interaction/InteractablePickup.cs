@@ -1,35 +1,45 @@
+using System.Collections;
 using UnityEngine;
 
 public class InteractablePickup : InteractableBase
 {
 
     Vector3 initialLocation;
-
     protected IPickableActor m_PickupActor;
+
+    private void Awake() 
+    {
+    }
 
     public void Start()
     {
         initialLocation = transform.position;
     }
 
-    public override void Interact( IInteractionActor pickupActor )
+    public void SetOwner(IPickableActor actor)
     {
-        m_PickupActor = pickupActor as IPickableActor;
-        m_PickupActor?.PickupItem( this );
+        m_PickupActor = actor;
     }
 
-    public virtual void Use() 
+    public override void Interact(IInteractionActor interactingActor)
     {
-    }
-
-    public void Drop() 
-    {
-        if (m_PickupActor == null) 
+        if (m_PickupActor != null)
         {
-            Debug.LogError("This item is not picked up by anyone, this is prolly a BUG.");
+            Debug.Log("It is already picked up by someone");
             return;
         }
-        m_PickupActor.DropItem(this);
-        m_PickupActor = null;
+
+        var actor = interactingActor as IPickableActor;
+        if (actor == null) 
+        {
+            Debug.LogError("Item is being picked up by someone who doesnt implement the IPickableActor Interface");
+            return;
+        }
+        actor.PickupItem(this);
+    }
+
+    public void EnablePhysics()
+    {
+        transform.position = initialLocation;
     }
 }

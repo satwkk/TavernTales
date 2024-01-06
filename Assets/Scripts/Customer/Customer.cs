@@ -63,7 +63,6 @@ namespace LHC.Customer
         private CustomerOrderManager m_OrderManager;
         
         // DEBUGGING (Remove this queue to a manager class afterwards)
-        public GameObject[] m_Waypoints;
         public Transform m_DebugSpawnLocation;
 
         // GETTERS
@@ -94,7 +93,7 @@ namespace LHC.Customer
             m_CustomerData.currentState.OnTick();
             
             // DEBUG
-            if ( Input.GetKeyDown( KeyCode.Space) ) 
+            if ( Input.GetKeyDown(KeyCode.Space) ) 
             {
                 m_CustomerData.currentState.SwitchState( m_ApproachShopState );
             }

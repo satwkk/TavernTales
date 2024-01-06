@@ -16,7 +16,9 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
 
     [Header("Pickup Settings")]
     [SerializeField] private Transform m_PickupHolder;
+    [SerializeField] private Transform m_FoodHolder;
     public Transform PickupHolder { get => m_PickupHolder; set => m_PickupHolder = value; }
+    public Transform FoodHolder { get => m_FoodHolder; set => m_FoodHolder = value; }
 
 
     [Header( "Pickup References" )]
@@ -24,6 +26,8 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
     [SerializeField] private InteractableBase m_CurrentInteractable;
     [SerializeField] private InteractablePickup m_CurrentPickup;
     [SerializeField] private Food m_CurrentPickupFood;
+    public Food CurrentPickupFood { get => m_CurrentPickupFood; set => m_CurrentPickupFood = value; }
+    
 
     // EVENTS
     public Action<Food> OnPickFood_Event { get; set; }
@@ -34,7 +38,19 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
 
     private void Start()
     {
-        Food.OnPickup += PickupFood;
+        m_InputManager.OnDropButtonPressed += OnDropButtonPressed_Callback;
+        Food.OnFoodPickup += PickupFood;
+    }
+
+    private void OnDropButtonPressed_Callback()
+    {
+        if (m_CurrentPickup == null)
+        {
+            Debug.LogError("No pickup in hands to drop");
+            return;
+        }
+
+        DropItem(m_CurrentPickup);
     }
 
     private void Update() 
@@ -71,7 +87,7 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
         }
     }
 
-    public void PickupItem(InteractableBase pickup) 
+    public void PickupItem(InteractablePickup pickup) 
     {
         // IF PLAYER HAS FOOD IN HANDS, HE CANNOT PICKUP ANYTHING ELSE
         if (HasPickupInHands()) 
@@ -79,25 +95,27 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
             Debug.LogError("Player already has something in his hand, cannot pickup anything else");
             return;
         }
-        m_CurrentInteractable = pickup;
-        m_CurrentInteractable.transform.position = PickupHolder.position;
-        m_CurrentInteractable.transform.SetParent(PickupHolder);
+
+        // SETUP THE OWNER OF THE PICKUP
+        m_CurrentPickup = pickup;
+        m_CurrentPickup.SetOwner(this);
+
+        // SET THE POSITION OF THE PICKUP TO ITS SOCKET
+        m_CurrentPickup.transform.position = PickupHolder.position;
+        m_CurrentPickup.transform.SetParent(PickupHolder);
     }
 
-    public void DropItem(InteractableBase pickup) {
-        if (m_CurrentInteractable == null) {
-            Debug.LogError("Player does not have any pickup in hands");
-            return;
-        }
+    public void DropItem(InteractablePickup pickup) {
 
-        if (m_CurrentInteractable != pickup)
-        {
-            Debug.LogError("[BUG] You are trying to throw something that is not in your hands.");
-            return;
-        }
-        
-        m_CurrentInteractable.transform.SetParent(null);
-        m_CurrentInteractable = null;
+        // REMOVE THE OWNER AND PARENT OF THIS TRANSFORM
+        m_CurrentPickup.SetOwner(null);
+        m_CurrentPickup.transform.SetParent(null);
+
+        // ENABLE PHYSICS AND ADD A FORCE TO THE OBJECT
+        m_CurrentPickup.EnablePhysics();
+
+        // NULL THE CURRENT PICKUP
+        m_CurrentPickup = null;
     }
 
     public Vector3 GetInteractionPosition()
@@ -107,24 +125,43 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
 
     public bool HasPickupInHands()
     {
-        return m_CurrentPickup != null;
+        return CurrentPickupFood != null;
     }
 
+    // ======================================= IFOODSERVICE ==============================================
     public Food GetFoodInHands()
     {
-        return m_CurrentPickupFood;
+        return CurrentPickupFood;
+    }
+
+    public void PlaceFood(IFoodPlacer foodPlacer)
+    {
+        CurrentPickupFood.transform.SetParent(null);
+        CurrentPickupFood.transform.position = foodPlacer.GetFoodPlacingLocation();
+        CurrentPickupFood = null;
     }
 
     public void PickupFood( Food food )
     {
-        if (m_CurrentPickupFood != null) 
+        if (GetFoodInHands() != null) 
         {
             Debug.LogError("Already has a food in hand");
             return;
         }
 
-        m_CurrentPickupFood = food;
-        PickupItem(m_CurrentPickupFood);
-        OnPickFood_Event?.Invoke( m_CurrentPickupFood );
+        CurrentPickupFood = food;
+        CurrentPickupFood.transform.position = FoodHolder.position;
+        CurrentPickupFood.transform.SetParent(FoodHolder);
+        OnPickFood_Event?.Invoke( CurrentPickupFood );
     }
+
+    // public void UseFood()
+    // {
+    //     var foodInHands = GetFoodInHands();
+    //     if (foodInHands == null) {
+    //         Debug.LogError("No food in hands");
+    //         return;
+    //     }
+    //     CurrentPickupFood = null;
+    // }
 }

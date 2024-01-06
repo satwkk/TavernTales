@@ -4,11 +4,9 @@ using UnityEngine;
 // public class Food : InteractablePickup {
 public class Food : InteractableBase 
 {
-
-    public FoodSO m_FoodData;
     private MeshRenderer m_Renderer;
     private Collider m_Collider;
-    public static Action<Food> OnPickup;
+    public static Action<Food> OnFoodPickup;
 
     public void Awake() 
     {
@@ -16,17 +14,17 @@ public class Food : InteractableBase
         m_Collider = GetComponent<Collider>();
     }
 
-    public override void Interact( IInteractionActor interactingActor ) 
+    private void Start()
     {
-        var foodService = interactingActor as IFoodOrderService;
-        foodService.PickupFood(this);
     }
 
-    // public override void Use() 
-    // {
-    //     // WE CAN CALL THE DROP FUNCTION FROM BASE CALL WHICH WILL SET THE CURRENT ITEM TO NULL AND UNPARENT IT FROM THE PLAYER
-    //     base.Drop();
-    //     m_Renderer.enabled = false;
-    //     m_Collider.enabled = false;
-    // }
+    public override void Interact( IInteractionActor interactingActor ) 
+    {
+        if (interactingActor is not IFoodOrderService foodService)
+        {
+            Debug.LogError("Not implemented IInteractionActor");
+            return;
+        }
+        foodService.PickupFood(this);
+    }
 }

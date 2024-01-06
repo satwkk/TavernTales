@@ -1,29 +1,36 @@
-using LHC.Globals;
-using NUnit.Framework.Constraints;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using UnityEngine;
+using LHC.Customer;
+using System.Collections;
+using System.Collections.Generic;
+using Timer = LHC.Globals.Timer;
 
 [System.Serializable]
 public struct CurrentOrderData 
 {
+    public Customer customer;
     public Ingredient ingredientToCook;
     public int foodsLeftToCompleteOrder;
-    public Dictionary<Food, bool> requiredFoodMap;
+    public Dictionary<string, bool> requiredFoodMap;
+    public float timeLeftForOrder;
 
     public bool IsFoodAdded(Food food)
     {
-        return requiredFoodMap[food] == true;
+        return requiredFoodMap[food.name] == true;
     }
 }
 
 public class OrderReceiver : MonoBehaviour
 {
     public IFoodOrderService m_FoodServiceActor;
+    private Timer m_FoodPreparationTimer;
 
     [Header("Current Order Data")][Space()]
     public CurrentOrderData m_CurrentOrderData;
-    public Food m_PickedFood;
+
+    public static Action OnFoodServeSuccess_Event;
+    public static Action OnFoodServeFail_Event;
 
     private void Awake()
     {
@@ -32,11 +39,9 @@ public class OrderReceiver : MonoBehaviour
 
     private void Start()
     {
-        m_CurrentOrderData.requiredFoodMap = new Dictionary<Food, bool>();
-        
+        m_CurrentOrderData.requiredFoodMap = new Dictionary<string, bool>();
         CustomerOrderManager.OnFoodOrdered_Event += OnFoodOrdered_Callback;
-        m_FoodServiceActor.OnPickFood_Event += OnPickFood_Callback;
-        CookingPot.OnFoodAddToPot_Event += OnFoodAddToPot_Callback;
+        CookingPot.OnFoodAddToPotEvent += OnFoodAddToPot_Callback;
     }
 
     private bool IsOrderComplete() 
@@ -45,26 +50,18 @@ public class OrderReceiver : MonoBehaviour
     }
 
     /// <summary>
-    /// Callback called when an IFoodOrderService actor picks up a food
-    /// TODO: I dunno if this reference needs to be stayed here. It is already stored in InteractionController
-    /// </summary>
-    /// <param name="food"> The picked up food </param>
-    private void OnPickFood_Callback(Food food)
-    {
-        m_PickedFood = food;
-    }
-
-    /// <summary>
     /// This callback is called when a food is added to the cooking pot by an IFoodOrderService object.
     /// </summary>
     /// <param name="food"> The last added food to the cooking pot </param>
     private void OnFoodAddToPot_Callback(Food food)
     {
-        if (m_CurrentOrderData.ingredientToCook.IngredientData.requiredFoods.Contains(food) && m_CurrentOrderData.requiredFoodMap[food] == false)
+        Food foundFood  = m_CurrentOrderData.ingredientToCook.IngredientData.requiredFoods.Where(x => x.name == food.name).First();
+        Debug.LogError(foundFood == null);
+        if (foundFood != null && !m_CurrentOrderData.IsFoodAdded(foundFood))
         {
-            m_CurrentOrderData.requiredFoodMap[food] = true;
+            m_CurrentOrderData.requiredFoodMap[foundFood.name] = true;
             m_CurrentOrderData.foodsLeftToCompleteOrder--;
-            Debug.Log( "Correct food added to pot, one down" );
+            Debug.Log("Correct food added to pot, one down");
         }
     }
 
@@ -72,19 +69,37 @@ public class OrderReceiver : MonoBehaviour
     /// This callback is called when a customer reached the chef table and orders a food
     /// </summary>
     /// <param name="ingredient"> The ordered ingredient </param>
-    private void OnFoodOrdered_Callback( Ingredient ingredient )
+    private void OnFoodOrdered_Callback(Customer customer, Ingredient ingredient)
     {
+        m_CurrentOrderData.customer = customer;
         m_CurrentOrderData.ingredientToCook = ingredient;
         m_CurrentOrderData.foodsLeftToCompleteOrder = ingredient.IngredientData.requiredFoods.Count;
         
         // Populate the required foods map in the current order data.
-        foreach (var food in ingredient.IngredientData.requiredFoods)
-        {
-            m_CurrentOrderData.requiredFoodMap[food] = false;
-        }
+        ingredient.IngredientData.requiredFoods.ForEach(x => m_CurrentOrderData.requiredFoodMap[x.name] = false);
 
         // Start the cooking timer after the order is received.
-        Timer timer = new Timer(this, ingredient.IngredientData.prepareDuration, OnOrderServing, OnOrderServingComplete);
+        StartCoroutine(StartFoodPreparationTimer());
+    }
+
+    private IEnumerator StartFoodPreparationTimer()
+    {
+        var targetTimer = m_CurrentOrderData.ingredientToCook.IngredientData.prepareDuration;
+        var currTimer = 0;
+        while (currTimer <= targetTimer)
+        {
+            OnOrderServing();
+            currTimer += 1;
+            yield return new WaitForSeconds(1);
+        }
+
+        OnOrderServingComplete();
+        yield return null;
+    }
+
+    private IEnumerator StartCheckIfOrderComplete()
+    {
+        yield return null;
     }
 
     /// <summary>
@@ -92,19 +107,30 @@ public class OrderReceiver : MonoBehaviour
     /// </summary>
     private void OnOrderServing() 
     {
-        Debug.LogWarning("Order state: " + IsOrderComplete());
+        var isComplete = IsOrderComplete();
+        Debug.LogWarning("Order state: " + isComplete);
+        if (isComplete)
+        {
+            Debug.Log("Food is successfully ordered");
+            StopAllCoroutines();
+            //m_FoodPreparationTimer.StopTimer();
+            OnFoodServeSuccess_Event?.Invoke();
+        }
     }
 
     /// <summary>
-    /// Callback called when the currently serving food timer is complete.
+    /// Callback called when the currently serving food timer is complete. This will only be called when the timer is over and the food is not served.
+    /// Because if the food is served in between the serving time then all coroutines are stopped.
     /// </summary>
     private void OnOrderServingComplete()
     {
+        Debug.LogError("Hello");
+        OnFoodServeFail_Event?.Invoke();
     }
 
     private void OnDisable()
     {
         CustomerOrderManager.OnFoodOrdered_Event -= OnFoodOrdered_Callback;
-        m_FoodServiceActor.OnPickFood_Event -= OnPickFood_Callback;
+        CookingPot.OnFoodAddToPotEvent -= OnFoodAddToPot_Callback;
     }
 }

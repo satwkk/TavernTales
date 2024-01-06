@@ -6,56 +6,47 @@ namespace LHC.Customer.StateMachine
 {
     public class OrderFoodState : BaseState
     {
-        private bool m_HasReachedOrderingZone;
-        private Ingredient m_FoodToOrder;
-
-        public OrderFoodState( Customer controller, CustomerData customerData ) : base( controller, customerData )
+        public OrderFoodState(Customer controller, CustomerData customerData) : base( controller, customerData )
         {
-            
+        }
+
+        private void OnOrderComplete_Callback()
+        {
+            Debug.Log("Going back to eat state");
+        }
+
+        private void OnOrderFail_Callback()
+        {
+            Debug.Log("order failed customer is now angy.");
         }
 
         public override void OnEnter()
         {
-            m_FoodToOrder = IngredientSpawner.Instance.CreateIngredient();
-            m_Customer.StartCoroutine(OrderFoodCoro());
+            m_Customer.StartCoroutine(OrderFoodCoroutine());
         }
 
         public override void OnExit()
         {
             m_Customer.GetAnimationManager().PlayWalkingAnimation( false );
+            m_Customer.GetOrderManager().OnOrderComplete_Event -= OnOrderComplete_Callback;
+            m_Customer.GetOrderManager().OnOrderFail_Event -= OnOrderFail_Callback;
         }
 
-        private IEnumerator OrderFoodCoro()
+        private IEnumerator OrderFoodCoroutine()
         {
             yield return new WaitForSeconds(1f);
             m_Customer.GetAnimationManager().PlayWalkingAnimation( true );
             m_Customer.StartCoroutine(FollowWayPoints(WayPointManager.instance.GetOrderFoodWayPoint(), () =>
             {
-                m_HasReachedOrderingZone = true;
                 m_Customer.GetAnimationManager().PlayWalkingAnimation( false );
                 m_Customer.GetOrderManager().OrderFood( IngredientSpawner.Instance.CreateIngredient() );
+                m_Customer.GetOrderManager().OnOrderComplete_Event += OnOrderComplete_Callback;
+                m_Customer.GetOrderManager().OnOrderFail_Event += OnOrderFail_Callback;
             } ));
         }
 
         public override void OnTick()
         {
-            if (m_HasReachedOrderingZone)
-            {
-                if (IsFoodAvailableInTime())
-                {
-                    Debug.Log( "Food is available now going to eating state" );
-                }
-            }
-        }
-
-        // CHECK IF THE FOOD IS AVAILABLE ON THE FOOD PLACING ZONE
-        private bool IsFoodAvailableInTime()
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

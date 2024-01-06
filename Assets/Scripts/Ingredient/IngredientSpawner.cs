@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
+using System.Collections.Generic;
 
 public class IngredientSpawner : MonoBehaviour {
     public List<IngredientData> m_AvailableIngredients;
