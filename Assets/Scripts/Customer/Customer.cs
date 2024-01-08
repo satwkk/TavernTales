@@ -1,9 +1,12 @@
 using UnityEngine;
 using LHC.Customer.StateMachine;
 using System;
+using UnityEngine.Serialization;
 
 namespace LHC.Customer
 {
+    using LHC.Tavern;
+    
     public enum CustomerType
     {
         CIVILIAN,
@@ -49,13 +52,14 @@ namespace LHC.Customer
         public CustomerData m_CustomerData;
 
         // LOCOMOTION SHIT
-        public CharacterController m_CharacterController;
+        public CharacterController CharacterController { get; private set; }
 
         // STATES
-        public IdleState m_IdleState;
-        public WanderState m_WanderState;
-        public ApproachShopState m_ApproachShopState;
-        public OrderFoodState m_OrderState;
+        public IdleState IdleState { get; private set; }
+        public WanderState WanderState { get; private set; }
+        public ApproachShopState ApproachShopState { get; private set; }
+        public OrderFoodState OrderState { get; private set; }
+        public EatState EatState { get; private set; }
 
         // ANIMATION 
         private CustomerAnimationManager m_AnimationManager;
@@ -72,19 +76,21 @@ namespace LHC.Customer
 
         private void Awake()
         {
+            CharacterController = GetComponent<CharacterController>();
             m_AnimationManager = GetComponent<CustomerAnimationManager>();
             m_OrderManager = GetComponent<CustomerOrderManager>();
 
             // State instantiation
-            m_IdleState = new IdleState( this, m_CustomerData );
-            m_WanderState = new WanderState( this, m_CustomerData );
-            m_ApproachShopState = new ApproachShopState( this, m_CustomerData );
-            m_OrderState = new OrderFoodState( this, m_CustomerData );
+            IdleState = new IdleState( this, m_CustomerData );
+            WanderState = new WanderState( this, m_CustomerData );
+            ApproachShopState = new ApproachShopState( this, m_CustomerData );
+            OrderState = new OrderFoodState( this, m_CustomerData );
+            EatState = new EatState(this, m_CustomerData);
         }
 
         private void Start()
         {
-            m_CustomerData.currentState = m_IdleState;
+            m_CustomerData.currentState = IdleState;
             m_CustomerData.currentState.OnEnter();
         }
 
@@ -95,7 +101,7 @@ namespace LHC.Customer
             // DEBUG
             if ( Input.GetKeyDown(KeyCode.Space) ) 
             {
-                m_CustomerData.currentState.SwitchState( m_ApproachShopState );
+                m_CustomerData.currentState.SwitchState( ApproachShopState );
             }
         }
 

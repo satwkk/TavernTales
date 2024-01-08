@@ -40,7 +40,16 @@ namespace LHC.Customer.StateMachine
             }
 
             var motion = ( position - m_Customer.transform.position ).normalized;
-            m_Customer.m_CharacterController.Move(motion * speed * Time.deltaTime);
+            m_Customer.CharacterController.Move(motion * speed * Time.deltaTime);
+        }
+
+        protected IEnumerator MoveToCoroutine(Vector3 position, float speed, OnMovedToPosition after = null)
+        {
+            while (!HasReachedTargetPosition(position))
+            {
+                MoveTo(position, speed, after);
+                yield return null;
+            }
         }
 
         protected delegate void OnRotationFinish();
@@ -54,6 +63,11 @@ namespace LHC.Customer.StateMachine
             m_Customer.transform.rotation = Quaternion.Slerp(m_Customer.transform.rotation, rotation, speed * Time.deltaTime);
         }
 
+        protected void MoveAndLookTowards(Vector3 position, Quaternion rotation, float moveSpeed, float rotateSpeed, OnMovedToPosition onMove = null, OnRotationFinish onRotate = null)
+        {
+            LookAt(rotation, rotateSpeed, onRotate);
+            MoveTo(position, moveSpeed, onMove);
+        }
 
         protected IEnumerator FollowWayPoints(List<WayPoint> wayPoints, Action after = null) 
         {

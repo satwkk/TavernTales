@@ -2,24 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CookingPot : InteractableBase, IFoodPlacer {
 
-    public List<Food> m_Foods;
-    public static event Action<Food> OnFoodAddToPotEvent;
-
-    private void Start() 
-    {
-        m_Foods = new List<Food>();
-    }
-
-    private void OnEnable() 
-    {
-    }
+    [SerializeField] private List<Food> foods;
     
-    private void OnDisable() 
-    {
-    }
+    public static event Action<Food> OnFoodAddToPotEvent;
 
     public override void Interact(IInteractionActor interactingActor)
     {
@@ -39,7 +28,7 @@ public class CookingPot : InteractableBase, IFoodPlacer {
         foodCharacter.PlaceFood(this);
 
         // Add the food to the list
-        m_Foods.Add(foodInHands);
+        foods.Add(foodInHands);
 
         // Fire an event to disable the game object
         OnFoodAddToPotEvent?.Invoke(foodInHands);

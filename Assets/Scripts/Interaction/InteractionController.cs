@@ -39,7 +39,17 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
     private void Start()
     {
         m_InputManager.OnDropButtonPressed += OnDropButtonPressed_Callback;
-        Food.OnFoodPickup += PickupFood;
+    }
+
+    private void Update() 
+    {
+        if (m_InputManager.isInteractPressed) 
+        {
+            TraceForInteractable();
+        }
+    }
+    private void OnDrawGizmos() {
+        Debug.DrawLine(m_TraceStartPos, m_TraceEndPos, Color.red);
     }
 
     private void OnDropButtonPressed_Callback()
@@ -49,29 +59,18 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
             Debug.LogError("No pickup in hands to drop");
             return;
         }
-
+        // m_CurrentPickupFood.Throw();
         DropItem(m_CurrentPickup);
     }
 
-    private void Update() 
-    {
-        if (m_InputManager.isInteractPressed) 
-        {
-            TraceForInteractables();
-        }
-    }
-    private void OnDrawGizmos() {
-        Debug.DrawLine(m_TraceStartPos, m_TraceEndPos, Color.red);
-    }
-
-    private void TraceForInteractables() 
+    private void TraceForInteractable() 
     {
         m_TraceStartPos = m_PlayerCamera.ScreenToWorldPoint(m_TargetTraceTransform.position);
         m_TraceEndPos = m_TraceStartPos + m_PlayerCamera.transform.forward * m_TraceRange;
         if (Physics.Raycast(m_TraceStartPos, m_PlayerCamera.transform.forward, out RaycastHit hitInfo, m_TraceRange)) 
         {
             var interactable = hitInfo.collider.GetComponent<InteractableBase>();
-            if (interactable != null) 
+            if (interactable is not null)
             {
                 m_CurrentInteractable = interactable;
                 m_CurrentInteractable.Interact(this);

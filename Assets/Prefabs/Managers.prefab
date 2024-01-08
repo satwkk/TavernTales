@@ -86,7 +86,7 @@ MonoBehaviour:
     requiredFoods:
     - {fileID: 3195257824349162321, guid: 66ffff5ba74c686449f7060aa94c3bc2, type: 3}
     - {fileID: 4124312778119444919, guid: d5b80bd7f120cb94786520358ed35825, type: 3}
-    prepareDuration: 5
+    prepareDuration: 50
     isServed: 0
     canServe: 0
   - name: Chicken Soup
@@ -94,7 +94,7 @@ MonoBehaviour:
     - {fileID: 3195257824349162321, guid: 66ffff5ba74c686449f7060aa94c3bc2, type: 3}
     - {fileID: 4124312778119444919, guid: d5b80bd7f120cb94786520358ed35825, type: 3}
     - {fileID: 6713582139175858878, guid: c78397c50169e6a49a28aec466c93ad6, type: 3}
-    prepareDuration: 0
+    prepareDuration: 50
     isServed: 0
     canServe: 0
 --- !u!114 &5127870080548669954
@@ -124,6 +124,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   orderFoodWayPoint_1:
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

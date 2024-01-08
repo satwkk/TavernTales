@@ -12,7 +12,7 @@ namespace LHC.Customer.StateMachine
 
         private void OnOrderComplete_Callback()
         {
-            Debug.Log("Going back to eat state");
+            SwitchState(m_Customer.EatState);
         }
 
         private void OnOrderFail_Callback()
@@ -36,7 +36,7 @@ namespace LHC.Customer.StateMachine
         {
             yield return new WaitForSeconds(1f);
             m_Customer.GetAnimationManager().PlayWalkingAnimation( true );
-            m_Customer.StartCoroutine(FollowWayPoints(WayPointManager.instance.GetOrderFoodWayPoint(), () =>
+            m_Customer.StartCoroutine(FollowWayPoints(WayPointManager.instance.GetOrderFoodWayPoint(), after: () =>
             {
                 m_Customer.GetAnimationManager().PlayWalkingAnimation( false );
                 m_Customer.GetOrderManager().OrderFood( IngredientSpawner.Instance.CreateIngredient() );

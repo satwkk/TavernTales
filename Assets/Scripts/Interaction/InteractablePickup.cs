@@ -1,11 +1,12 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class InteractablePickup : InteractableBase
 {
 
-    Vector3 initialLocation;
-    protected IPickableActor m_PickupActor;
+    private Vector3 _initialLocation;
+    private IPickableActor _pickupActor;
 
     private void Awake() 
     {
@@ -13,24 +14,23 @@ public class InteractablePickup : InteractableBase
 
     public void Start()
     {
-        initialLocation = transform.position;
+        _initialLocation = transform.position;
     }
 
     public void SetOwner(IPickableActor actor)
     {
-        m_PickupActor = actor;
+        _pickupActor = actor;
     }
 
     public override void Interact(IInteractionActor interactingActor)
     {
-        if (m_PickupActor != null)
+        if (_pickupActor != null)
         {
-            Debug.Log("It is already picked up by someone");
+            Debug.LogError("It is already picked up by someone");
             return;
         }
 
-        var actor = interactingActor as IPickableActor;
-        if (actor == null) 
+        if (interactingActor is not IPickableActor actor) 
         {
             Debug.LogError("Item is being picked up by someone who doesnt implement the IPickableActor Interface");
             return;
@@ -40,6 +40,6 @@ public class InteractablePickup : InteractableBase
 
     public void EnablePhysics()
     {
-        transform.position = initialLocation;
+        transform.position = _initialLocation;
     }
 }

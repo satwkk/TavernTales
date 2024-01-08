@@ -17,7 +17,7 @@ namespace LHC.Customer.StateMachine
             m_Customer.GetAnimationManager().PlayWalkingAnimation(true);
             m_Customer.StartCoroutine( FollowWayPoints( WayPointManager.instance.approachShopWayPoint, () =>
             {
-                SwitchState( m_Customer.m_OrderState );
+                SwitchState( m_Customer.OrderState );
             } ) );
         }
 
@@ -34,9 +34,9 @@ namespace LHC.Customer.StateMachine
 
         private void DebugSpawnCustomer()
         {
-            m_Customer.m_CharacterController.enabled = false;
+            m_Customer.CharacterController.enabled = false;
             m_Customer.transform.position = m_Customer.m_DebugSpawnLocation.position;
-            m_Customer.m_CharacterController.enabled = true;
+            m_Customer.CharacterController.enabled = true;
         }
 
         private void CheckForShopDoor()

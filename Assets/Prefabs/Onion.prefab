@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7359684851659047030}
   - component: {fileID: 5378897107010426779}
   - component: {fileID: 7078152830022254590}
-  - component: {fileID: 8772857989633772168}
   - component: {fileID: 3195257824349162321}
   m_Layer: 0
   m_Name: Onion
@@ -107,33 +106,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.079824, y: 0.18717568, z: 0.08393181}
   m_Center: {x: -0.0008121263, y: 0.06323961, z: -0.002579853}
---- !u!54 &8772857989633772168
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4823337631540972974}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &3195257824349162321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,5 +118,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7abbd5f54ffdeba43b244dbf2701be6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Rigidbody: {fileID: 0}
-  m_FoodData: {fileID: 0}
+  m_Id: 

@@ -20,6 +20,4 @@ public class Ingredient {
     public Ingredient(IngredientData ingredientData) {
         m_IngredientData = ingredientData;
     }
-    
-    public bool IsServed() { return m_IngredientData.isServed == true; }
 }

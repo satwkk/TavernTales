@@ -21,7 +21,7 @@ namespace LHC.Customer.StateMachine {
             // If the random coord in not navigable simply go back to idle state and try again
             if (!m_CanWander)
             {
-                SwitchState(m_Customer.m_IdleState);
+                SwitchState(m_Customer.IdleState);
             }
         }
 
@@ -32,7 +32,7 @@ namespace LHC.Customer.StateMachine {
                 CheckForObstacle();
                 LookAt(Quaternion.LookRotation(m_WanderTargetPos - m_Customer.transform.position), m_CustomerData.locomotionData.rotationSpeed);
                 MoveTo(m_WanderTargetPos, m_CustomerData.locomotionData.walkSpeed, () => {
-                    SwitchState(m_Customer.m_IdleState);
+                    SwitchState(m_Customer.IdleState);
                 });
             }
         }
@@ -72,7 +72,7 @@ namespace LHC.Customer.StateMachine {
             if ( Physics.Raycast( m_Customer.transform.position, m_Customer.transform.forward, out RaycastHit hitInfo, 2f ) )
             {
                 m_CanWander = false;
-                SwitchState(m_Customer.m_IdleState);
+                SwitchState(m_Customer.IdleState);
             }
         }
     }

@@ -8,7 +8,7 @@ using UnityEngine;
 public class CustomerOrderManager : MonoBehaviour
 {
     private Customer m_Customer;
-    private Ingredient m_OrderedFood;
+    public Ingredient CurrentOrderedFood { get; set; }
     public static Action<Customer, Ingredient> OnFoodOrdered_Event;
     public Action OnOrderComplete_Event;
     public Action OnOrderFail_Event;
@@ -32,29 +32,13 @@ public class CustomerOrderManager : MonoBehaviour
 
     public void OrderFood(Ingredient ingredient)
     {
-        m_OrderedFood = ingredient;
-        OnFoodOrdered_Event?.Invoke( m_Customer, m_OrderedFood );
+        CurrentOrderedFood = ingredient;
+        OnFoodOrdered_Event?.Invoke( m_Customer, CurrentOrderedFood );
     }
 
     private void OnDisable() 
     {
         OrderReceiver.OnFoodServeSuccess_Event -= OnFoodServeSuccess_Callback;
         OrderReceiver.OnFoodServeFail_Event -= OnFoodServeFail_Callback;
-    }
-
-    private IEnumerator StartServingWaitTimer()
-    {
-        var targetTimer = m_OrderedFood.IngredientData.prepareDuration;
-        var currTimer = 0;
-        while (currTimer < targetTimer)
-        {
-            currTimer += 1;
-            yield return new WaitForSeconds( 1f );
-        }
-
-        if (!m_OrderedFood.IngredientData.isServed)
-        {
-            Debug.Log( "Food was not served, customer is angry" );
-        }
     }
 }

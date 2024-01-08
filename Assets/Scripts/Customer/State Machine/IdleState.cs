@@ -32,7 +32,7 @@ namespace LHC.Customer.StateMachine
             if (m_CurrentIdleTimer >= m_TargetIdleInterval)
             {
                 m_CurrentIdleTimer = 0;
-                SwitchState(m_Customer.m_WanderState);
+                SwitchState(m_Customer.WanderState);
             }
             m_CurrentIdleTimer += Time.deltaTime;
         }
