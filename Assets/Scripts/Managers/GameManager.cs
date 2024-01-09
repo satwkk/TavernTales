@@ -17,6 +17,6 @@ public class GameManager : MonoBehaviour {
 
     private void OnIngredientCreate(Ingredient ingredient) {
         Debug.LogWarning("INGREDIENT CREATED");
-        Debug.Log("Name: " + ingredient.IngredientData.name);
+        Debug.Log("Name: " + ingredient.IngredientData.Name);
     }
 }

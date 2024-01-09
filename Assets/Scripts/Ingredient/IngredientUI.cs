@@ -18,8 +18,8 @@ public class IngredientUI : MonoBehaviour {
 
     public void OnIngredientCreateCallback(Ingredient currentIngredientData) {
         m_CurrentIngredientData = currentIngredientData;
-        ingredientNameUI.text = m_CurrentIngredientData.IngredientData.name;
-        ingredientDurationUI.text = m_CurrentIngredientData.IngredientData.prepareDuration.ToString();
+        ingredientNameUI.text = m_CurrentIngredientData.IngredientData.Name;
+        ingredientDurationUI.text = m_CurrentIngredientData.IngredientData.PrepationDuration.ToString();
         remainingDuration.value = 1f;
     }
 }

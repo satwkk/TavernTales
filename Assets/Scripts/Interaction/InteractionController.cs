@@ -24,7 +24,7 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
     [Header( "Pickup References" )]
     [Space()]
     [SerializeField] private InteractableBase m_CurrentInteractable;
-    [SerializeField] private InteractablePickup m_CurrentPickup;
+    [SerializeField] private IPickable m_CurrentPickup;
     [SerializeField] private Food m_CurrentPickupFood;
     public Food CurrentPickupFood { get => m_CurrentPickupFood; set => m_CurrentPickupFood = value; }
     
@@ -86,7 +86,7 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
         }
     }
 
-    public void PickupItem(InteractablePickup pickup) 
+    public void PickupItem(IPickable pickup) 
     {
         // IF PLAYER HAS FOOD IN HANDS, HE CANNOT PICKUP ANYTHING ELSE
         if (HasPickupInHands()) 
@@ -97,21 +97,25 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
 
         // SETUP THE OWNER OF THE PICKUP
         m_CurrentPickup = pickup;
-        m_CurrentPickup.SetOwner(this);
+        m_CurrentPickup.Owner = this;
 
         // SET THE POSITION OF THE PICKUP TO ITS SOCKET
-        m_CurrentPickup.transform.position = PickupHolder.position;
-        m_CurrentPickup.transform.SetParent(PickupHolder);
+        m_CurrentPickup.PickUp(PickupHolder);
+        // m_CurrentPickup.transform.position = PickupHolder.position;
+        // m_CurrentPickup.transform.SetParent(PickupHolder);
     }
 
-    public void DropItem(InteractablePickup pickup) {
-
+    public void DropItem(IPickable pickup)
+    {
+        m_CurrentPickup.Drop(PickupHolder);
+        m_CurrentPickup.Owner = null;
+        m_CurrentPickup = null;
         // REMOVE THE OWNER AND PARENT OF THIS TRANSFORM
-        m_CurrentPickup.SetOwner(null);
-        m_CurrentPickup.transform.SetParent(null);
+        // m_CurrentPickup.SetOwner(null);
+        // m_CurrentPickup.transform.SetParent(null);
 
         // ENABLE PHYSICS AND ADD A FORCE TO THE OBJECT
-        m_CurrentPickup.EnablePhysics();
+        // m_CurrentPickup.EnablePhysics();
 
         // NULL THE CURRENT PICKUP
         m_CurrentPickup = null;
@@ -153,14 +157,4 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
         CurrentPickupFood.transform.SetParent(FoodHolder);
         OnPickFood_Event?.Invoke( CurrentPickupFood );
     }
-
-    // public void UseFood()
-    // {
-    //     var foodInHands = GetFoodInHands();
-    //     if (foodInHands == null) {
-    //         Debug.LogError("No food in hands");
-    //         return;
-    //     }
-    //     CurrentPickupFood = null;
-    // }
 }

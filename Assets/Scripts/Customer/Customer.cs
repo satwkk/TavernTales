@@ -34,7 +34,6 @@ namespace LHC.Customer
         public float interactionRange;
     }
 
-
     [System.Serializable]
     public struct CustomerData
     {
@@ -62,23 +61,24 @@ namespace LHC.Customer
         public EatState EatState { get; private set; }
 
         // ANIMATION 
-        private CustomerAnimationManager m_AnimationManager;
-
-        private CustomerOrderManager m_OrderManager;
+        public CustomerAnimationManager AnimationManager { get; private set; }
+        
+        // PICKUP
+        public Transform PickupSocket;
+        
+        public CustomerOrderManager OrderManager { get; private set; }
         
         // DEBUGGING (Remove this queue to a manager class afterwards)
         public Transform m_DebugSpawnLocation;
 
         // GETTERS
         public CustomerData GetCustomerData() { return m_CustomerData; }
-        public CustomerAnimationManager GetAnimationManager() => m_AnimationManager;
-        public CustomerOrderManager GetOrderManager() { return m_OrderManager; }
 
         private void Awake()
         {
             CharacterController = GetComponent<CharacterController>();
-            m_AnimationManager = GetComponent<CustomerAnimationManager>();
-            m_OrderManager = GetComponent<CustomerOrderManager>();
+            AnimationManager = GetComponent<CustomerAnimationManager>();
+            OrderManager = GetComponent<CustomerOrderManager>();
 
             // State instantiation
             IdleState = new IdleState( this, m_CustomerData );
@@ -97,26 +97,12 @@ namespace LHC.Customer
         private void Update()
         {
             m_CustomerData.currentState.OnTick();
-            
-            // DEBUG
-            if ( Input.GetKeyDown(KeyCode.Space) ) 
-            {
-                m_CustomerData.currentState.SwitchState( ApproachShopState );
-            }
         }
 
-        public bool HasOrderedIngredient()
+        // DEBUG
+        public void SwitchStateDebug()
         {
-            return m_CustomerData.currentIngredient != null;
-        }
-
-        private void ApplyGravity()
-        {
-            if (Physics.Raycast(transform.position, -transform.up * 100f, out RaycastHit hitInfo))
-            {
-                var newPos = transform.position;
-                newPos.y = hitInfo.point.y;
-            }
+            m_CustomerData.currentState.SwitchState( ApproachShopState );
         }
 
         private void OnDrawGizmos() 
@@ -127,14 +113,6 @@ namespace LHC.Customer
         public Vector3 GetInteractionPosition()
         {
             return this.transform.position;
-        }
-
-        private void OnEnable()
-        {
-        }
-
-        private void OnDisable()
-        {
         }
     }
 }

@@ -14,7 +14,7 @@ namespace LHC.Customer.StateMachine
         public override void OnEnter()
         {
             DebugSpawnCustomer();
-            m_Customer.GetAnimationManager().PlayWalkingAnimation(true);
+            m_Customer.AnimationManager.PlayWalkingAnimation(true);
             m_Customer.StartCoroutine( FollowWayPoints( WayPointManager.instance.approachShopWayPoint, () =>
             {
                 SwitchState( m_Customer.OrderState );
@@ -23,7 +23,7 @@ namespace LHC.Customer.StateMachine
 
         public override void OnExit()
         {
-            m_Customer.GetAnimationManager().PlayWalkingAnimation(false);
+            m_Customer.AnimationManager.PlayWalkingAnimation(false);
         }
 
         public override void OnTick()

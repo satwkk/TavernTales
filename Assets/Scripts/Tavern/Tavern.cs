@@ -23,7 +23,7 @@ namespace LHC.Tavern
         public EatingTable GetAvailableEatingTable()
         {
             var availableEatingTables = EatingTables.Where(x => x.IsFull == false).ToArray();
-            return availableEatingTables[UnityEngine.Random.Range(0, availableEatingTables.Length-1)];
+            return availableEatingTables[UnityEngine.Random.Range(0, availableEatingTables.Length)];
         }
     }
 }

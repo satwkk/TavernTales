@@ -5,7 +5,6 @@ namespace LHC.Tavern
     using System;
     using System.Collections;
     using LHC.Customer;
-    using LHC.Globals;
     
     public class Seat : MonoBehaviour
     {
@@ -36,13 +35,12 @@ namespace LHC.Tavern
             // TURN TOWARDS THE TABLE
             while (SeatingCustomerTransform.forward != forwardDir)
             {
-                // SeatingCustomerTransform.forward = Vector3.MoveTowards(SeatingCustomerTransform.forward, forwardDir, 2f * Time.deltaTime);
-                SeatingCustomerTransform.forward = Vector3.Lerp(SeatingCustomerTransform.forward, forwardDir, 3f * Time.deltaTime);
+                SeatingCustomerTransform.forward = Vector3.MoveTowards(SeatingCustomerTransform.forward, forwardDir, 5f * Time.deltaTime);
                 yield return null;
             }
 
             // PLAY THE SITTING ANIMATION
-            SeatingCustomer.GetAnimationManager().PlaySittingAnimation(true);
+            SeatingCustomer.AnimationManager.PlaySittingAnimation(true);
 
             // MOVE THE COLLIDER DOWN TO THE OFFSET TO ALIGN THE CUSTOMER WITH THE CHAIR
             while (Vector3.SqrMagnitude(SeatingCustomerTransform.position - SeatingOffsetTransform.position) > 0.2f * 0.2f)

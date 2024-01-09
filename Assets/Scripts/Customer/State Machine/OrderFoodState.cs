@@ -1,23 +1,19 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace LHC.Customer.StateMachine
 {
     public class OrderFoodState : BaseState
     {
+        public bool IsFoodOrdered { get; set; }
+        public Ingredient ingredientToOrder;
+        public Ingredient IngredientToOrder { get => ingredientToOrder; set => ingredientToOrder = value; }
+        public float CurrentWaitTimer { get; private set; } = 0f;
+
         public OrderFoodState(Customer controller, CustomerData customerData) : base( controller, customerData )
         {
-        }
-
-        private void OnOrderComplete_Callback()
-        {
-            SwitchState(m_Customer.EatState);
-        }
-
-        private void OnOrderFail_Callback()
-        {
-            Debug.Log("order failed customer is now angy.");
         }
 
         public override void OnEnter()
@@ -27,26 +23,47 @@ namespace LHC.Customer.StateMachine
 
         public override void OnExit()
         {
-            m_Customer.GetAnimationManager().PlayWalkingAnimation( false );
-            m_Customer.GetOrderManager().OnOrderComplete_Event -= OnOrderComplete_Callback;
-            m_Customer.GetOrderManager().OnOrderFail_Event -= OnOrderFail_Callback;
+            IsFoodOrdered = false;
+            IngredientToOrder = null;
+            CurrentWaitTimer = 0f;
+            m_Customer.AnimationManager.PlayWalkingAnimation( false );
         }
 
         private IEnumerator OrderFoodCoroutine()
         {
             yield return new WaitForSeconds(1f);
-            m_Customer.GetAnimationManager().PlayWalkingAnimation( true );
+            m_Customer.AnimationManager.PlayWalkingAnimation( true );
             m_Customer.StartCoroutine(FollowWayPoints(WayPointManager.instance.GetOrderFoodWayPoint(), after: () =>
             {
-                m_Customer.GetAnimationManager().PlayWalkingAnimation( false );
-                m_Customer.GetOrderManager().OrderFood( IngredientSpawner.Instance.CreateIngredient() );
-                m_Customer.GetOrderManager().OnOrderComplete_Event += OnOrderComplete_Callback;
-                m_Customer.GetOrderManager().OnOrderFail_Event += OnOrderFail_Callback;
+                IngredientToOrder = IngredientSpawner.Instance.CreateIngredient();
+                IngredientToOrder.IngredientData.OnServe += OnServe;
+
+                m_Customer.AnimationManager.PlayWalkingAnimation( false );
+                m_Customer.OrderManager.OrderFood(ingredientToOrder);
+
+                IsFoodOrdered = true;
             } ));
+        }
+
+        private void OnServe()
+        {
+            Debug.Log("Food has been served");
+            SwitchState(m_Customer.EatState);
         }
 
         public override void OnTick()
         {
+            if (IsFoodOrdered == false)
+                return;
+
+            if (CurrentWaitTimer >= IngredientToOrder.IngredientData.CustomerWaitingTimer && IngredientToOrder.IngredientData.IsServed.Equals(false))
+            {
+                Debug.LogError("Customer has waited long enough and no food has been served");
+                SwitchState(m_Customer.IdleState);
+            }
+
+            CurrentWaitTimer += Time.deltaTime;
+            Debug.LogWarning(CurrentWaitTimer);
         }
     }
 }

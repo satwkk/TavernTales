@@ -19,6 +19,7 @@ namespace LHC.Customer.StateMachine
 
         public override void OnEnter()
         {
+            UnityEngine.Debug.Log("Entering idle state");
             m_TargetIdleInterval = GetRandomWaitTime();
             m_CurrentIdleTimer = 0;
         }

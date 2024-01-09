@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class InteractablePickup : InteractableBase
+public class InteractablePickup : InteractableBase, IPickable
 {
 
     private Vector3 _initialLocation;
@@ -38,8 +38,14 @@ public class InteractablePickup : InteractableBase
         actor.PickupItem(this);
     }
 
-    public void EnablePhysics()
+    public IPickableActor Owner { get; set; }
+    public void PickUp(Transform pickupHolder)
     {
-        transform.position = _initialLocation;
+        throw new NotImplementedException();
+    }
+
+    public void Drop(Transform pickupHolder)
+    {
+        throw new NotImplementedException();
     }
 }

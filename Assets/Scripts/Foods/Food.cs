@@ -7,7 +7,7 @@ public class Food : InteractableBase
     private MeshRenderer m_Renderer;
     private Collider m_Collider;
 
-    public void Awake() 
+    protected virtual void Awake() 
     {
         m_Renderer = GetComponent<MeshRenderer>();
         m_Collider = GetComponent<Collider>();

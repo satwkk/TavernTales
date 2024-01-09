@@ -3,6 +3,9 @@ namespace LHC.Globals
 {
     public static class Constants 
     {
+        
+        public const string COOKINGPOT_COOKEDFOOD_SOCKET = "SKT_LerpTo_AfterCooked";
+
         public const string HIP_RAYCAST_TRANSFORM = "SKT_Sitting_Raycast";
 
         /// =========================== Animation variables ============================

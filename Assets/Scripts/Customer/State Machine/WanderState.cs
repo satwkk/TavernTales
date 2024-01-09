@@ -14,7 +14,7 @@ namespace LHC.Customer.StateMachine {
         public override void OnEnter()
         {
             Debug.Log( "Entering wander state" );
-            m_Customer.GetAnimationManager().PlayWalkingAnimation(true);
+            m_Customer.AnimationManager.PlayWalkingAnimation(true);
             m_WanderTargetPos = GetRandomCoordInAgentRadius();
             m_CanWander = IsNavigable(m_WanderTargetPos);
 
@@ -41,7 +41,7 @@ namespace LHC.Customer.StateMachine {
         {
             m_CanWander = false;
             m_WanderTargetPos = Vector3.zero;
-            m_Customer.GetAnimationManager().PlayWalkingAnimation(false);
+            m_Customer.AnimationManager.PlayWalkingAnimation(false);
         }
 
         private Vector3 GetRandomCoordInAgentRadius()

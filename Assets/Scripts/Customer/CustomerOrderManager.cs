@@ -1,8 +1,5 @@
 using LHC.Customer;
-using LHC.Globals;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CustomerOrderManager : MonoBehaviour
@@ -16,8 +13,6 @@ public class CustomerOrderManager : MonoBehaviour
     private void Start()
     {
         m_Customer = GetComponent<Customer>();
-        OrderReceiver.OnFoodServeSuccess_Event += OnFoodServeSuccess_Callback;
-        OrderReceiver.OnFoodServeFail_Event += OnFoodServeFail_Callback;
     }
 
     private void OnFoodServeFail_Callback()
@@ -30,6 +25,7 @@ public class CustomerOrderManager : MonoBehaviour
         OnOrderComplete_Event?.Invoke();
     }
 
+    // TODO: Maybe pass by reference
     public void OrderFood(Ingredient ingredient)
     {
         CurrentOrderedFood = ingredient;
@@ -38,7 +34,5 @@ public class CustomerOrderManager : MonoBehaviour
 
     private void OnDisable() 
     {
-        OrderReceiver.OnFoodServeSuccess_Event -= OnFoodServeSuccess_Callback;
-        OrderReceiver.OnFoodServeFail_Event -= OnFoodServeFail_Callback;
     }
 }
