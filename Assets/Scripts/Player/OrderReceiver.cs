@@ -16,7 +16,7 @@ public class CurrentOrderData
 
     public bool IsFoodAdded(Food food)
     {
-        return requiredFoodMap[food.name] == true;
+        return requiredFoodMap[food.Id] == true;
     }
 }
 
@@ -28,7 +28,7 @@ public class OrderReceiver : MonoBehaviour
     
     public IFoodOrderService FoodServiceActor { get; private set; }
 
-    public bool IsOrderReceived { get; private set; } = false;
+    [field: SerializeField] public bool IsOrderReceived { get; private set; } = false;
 
     private void Awake()
     {
@@ -43,20 +43,22 @@ public class OrderReceiver : MonoBehaviour
 
     private void Update()
     {
-        if (!IsOrderReceived)
+        if (!IsOrderReceived) {
+            Debug.LogError("Is is not recieved");
             return;
+        }
 
-        if (!HasAllRequiredFoodsAdded())
+        if (!HasAllRequiredFoodsAdded()) {
+            Debug.LogError("All required foods are not added");
             return;
+        }
 
         if (!IsOrderReadyToServe())
         {
             CurrentOrderData.CurrentCookingTimer += Time.deltaTime;
             return;
         }
-        Debug.Log("cooking timer complete, please take the food");
-        // CurrentOrderData.ingredientToCook.IngredientData.IsServed = true;
-
+        Debug.LogError("cooking timer complete, please take the food");
         CookingPot.Instance.CreateCookedIngredient(CurrentOrderData.ingredientToCook);
         Cleanup();
     }
@@ -80,10 +82,10 @@ public class OrderReceiver : MonoBehaviour
 
     private void OnFoodAddToPot_Callback(Food food)
     {
-        Food foundFood  = CurrentOrderData.ingredientToCook.IngredientData.RequiredFoods.Where(x => x.name == food.name).First();
+        Food foundFood  = CurrentOrderData.ingredientToCook.IngredientData.RequiredFoods.Where(x => x.Id == food.Id).First();
         if (foundFood != null && !CurrentOrderData.IsFoodAdded(foundFood))
         {
-            CurrentOrderData.requiredFoodMap[foundFood.name] = true;
+            CurrentOrderData.requiredFoodMap[foundFood.Id] = true;
             CurrentOrderData.foodsLeftToCompleteOrder--;
         }
     }
@@ -101,7 +103,7 @@ public class OrderReceiver : MonoBehaviour
         };
 
         // Populate the required foods map in the current order data
-        CurrentOrderData.ingredientToCook.IngredientData.RequiredFoods.ForEach(x => CurrentOrderData.requiredFoodMap.Add(x.name, false));
+        CurrentOrderData.ingredientToCook.IngredientData.RequiredFoods.ForEach(x => CurrentOrderData.requiredFoodMap.Add(x.Id, false));
     }
 
     private void OnDisable()

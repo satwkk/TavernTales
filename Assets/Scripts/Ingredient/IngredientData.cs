@@ -28,6 +28,16 @@ public class IngredientData {
     // CREATE A PREFAB WITH THE PREPARED INGREDIENT WHICH WILL BE SPAWNED WHEN THE INGREDIENT IS COOKED 
     public GameObject CookedIngredientPrefab;
 
+    public IngredientData(IngredientData other) 
+    {
+        this.Name = other.Name;
+        this.RequiredFoods = other.RequiredFoods;
+        this.PrepationDuration = other.PrepationDuration;
+        this.OnServe = other.OnServe;
+        this.isServed = other.isServed;
+        this.CookedIngredientPrefab = other.CookedIngredientPrefab;
+    }
+
     public bool HasFoodInRequiredItems(Food food) {
         foreach (var f in RequiredFoods) {
             if (f.name == food.name) {

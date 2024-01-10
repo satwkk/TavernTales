@@ -31,6 +31,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 926431785116443449}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5217984982834027111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2134072335835671131}
+  m_Layer: 0
+  m_Name: Obstacle Detector
+  m_TagString: Untagged
+  m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2134072335835671131
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5217984982834027111}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.018, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3057050325609840809}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5832632270907306733
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,6 +193,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1669093077097749926}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: e8196b76e6108b74aa9c9192f64f5003,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2134072335835671131}
     - targetCorrespondingSourceObject: {fileID: -6828245782941547397, guid: e8196b76e6108b74aa9c9192f64f5003,
         type: 3}
       insertIndex: -1
@@ -256,6 +291,7 @@ MonoBehaviour:
         CookedIngredientPrefab: {fileID: 0}
   PickupSocket: {fileID: 2540656027415573468}
   m_DebugSpawnLocation: {fileID: 0}
+  ObstacleDetectorTransform: {fileID: 2134072335835671131}
 --- !u!114 &8646425177012565474
 MonoBehaviour:
   m_ObjectHideFlags: 0

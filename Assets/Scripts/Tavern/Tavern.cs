@@ -25,6 +25,11 @@ namespace LHC.Tavern
             var availableEatingTables = EatingTables.Where(x => x.IsFull == false).ToArray();
             return availableEatingTables[UnityEngine.Random.Range(0, availableEatingTables.Length)];
         }
+
+        public bool IsTavernFull()
+        {
+            return EatingTables.All(x => x.IsFull);
+        }
     }
 }
 

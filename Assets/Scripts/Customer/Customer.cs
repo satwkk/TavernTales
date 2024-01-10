@@ -6,7 +6,8 @@ using UnityEngine.Serialization;
 namespace LHC.Customer
 {
     using LHC.Tavern;
-    
+    using Unity.Jobs;
+
     public enum CustomerType
     {
         CIVILIAN,
@@ -70,6 +71,7 @@ namespace LHC.Customer
         
         // DEBUGGING (Remove this queue to a manager class afterwards)
         public Transform m_DebugSpawnLocation;
+        public Transform ObstacleDetectorTransform;
 
         // GETTERS
         public CustomerData GetCustomerData() { return m_CustomerData; }

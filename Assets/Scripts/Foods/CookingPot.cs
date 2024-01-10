@@ -7,7 +7,7 @@ using LHC.Globals;
 public class CookingPot : InteractableBase, IFoodPlacer {
 
     // THE COOKING PARTICLE SYSTEM THAT IS TRIGGERED WHEN THE COOK IS BEING PREPARED
-    [field: SerializeField] public ParticleSystem CookingParticle;
+    [SerializeField] public ParticleSystem CookingParticle;
 
     // LIST OF FOODS THAT ARE BEING ADDED TO THE POT
     [SerializeField] private List<Food> foods;
@@ -46,6 +46,14 @@ public class CookingPot : InteractableBase, IFoodPlacer {
         StartCoroutine(StartCookFinishAnimation());
     }
 
+    void CleanUp()
+    {
+        foods.Clear();
+        CurrentIngredient = null;
+        CurrentCookedIngredient = null;
+        CurrentCookedIngredientObj = null;
+    }
+
     private IEnumerator StartCookFinishAnimation()
     {
         while (CurrentCookedIngredient.transform.position != LerpToSocketAfterCurrentIngredientCooked.position)
@@ -57,6 +65,8 @@ public class CookingPot : InteractableBase, IFoodPlacer {
             );
             yield return null;
         }
+        
+        CleanUp();
     }
 
     public void PlayCookingParticle()
@@ -79,14 +89,16 @@ public class CookingPot : InteractableBase, IFoodPlacer {
 
     private void Interact(IFoodOrderService foodCharacter) 
     {
-        // Get the current food from player's hands
+        // GET THE CURRENT FOOD FROM PLAYER'S HANDS
         var foodInHands = foodCharacter.GetFoodInHands();
+
+        // PLACE THE FOOD IN THE POT 
         foodCharacter.PlaceFood(this);
 
-        // Add the food to the list
+        // ADD THE FOOD TO THE LIST
         foods.Add(foodInHands);
 
-        // Fire an event to disable the game object
+        // FIRE AN EVENT TO DISABLE THE GAME OBJECT
         OnFoodAddToPotEvent?.Invoke(foodInHands);
     }
 
