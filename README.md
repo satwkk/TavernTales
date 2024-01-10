@@ -22,4 +22,4 @@ https://github.com/satwkk/LetHimCook/assets/58104861/a1a24cf1-8845-4542-a9ba-4dc
 
 ![village](https://github.com/satwkk/LetHimCook/assets/58104861/5f11426c-b3af-420c-b30c-45ccb5d9424f)
 ![villagers](https://github.com/satwkk/LetHimCook/assets/58104861/f374dc0f-1d9e-4221-9ba7-8204b23bda16)
-![scenery](https://github.com/satwkk/LetHimCook/assets/58104861/8683b4ea-f1f5-42ef-a525-c0203e6db16c)
+![scenery](https://github.com/satwkk/LetHimCook/assets/58104861/69f5e514-030a-46a1-9be1-75ebf48f7834)
