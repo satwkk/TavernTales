@@ -48,6 +48,8 @@ namespace LHC.Tavern
                 SeatingCustomerTransform.position = Vector3.MoveTowards(SeatingCustomerTransform.position, SeatingOffsetTransform.position, 1f * Time.deltaTime);
                 yield return null;
             }
+            
+            after?.Invoke();
         }
     }
 }

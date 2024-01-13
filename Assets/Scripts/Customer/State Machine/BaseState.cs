@@ -84,7 +84,7 @@ namespace LHC.Customer.StateMachine
                 // ROTATE TOWARDS THE WAYPOINT
                 var turnRotation = GetDirectionWayPoint(currentWayPoint);
 
-                while (Vector3.SqrMagnitude(m_Customer.transform.position - currentWayPointFinalPos) > 0.2f * 0.2f)
+                while (Vector3.SqrMagnitude(m_Customer.transform.position - currentWayPointFinalPos) > 0.3f * 0.3f)
                 {
                     LookAt(turnRotation, m_CustomerData.locomotionData.rotationSpeed);
                     MoveTo( currentWayPointFinalPos, m_CustomerData.locomotionData.walkSpeed );

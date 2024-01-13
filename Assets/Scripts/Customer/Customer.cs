@@ -7,6 +7,7 @@ namespace LHC.Customer
 {
     using LHC.Tavern;
     using Unity.Jobs;
+    using UnityEditor;
 
     public enum CustomerType
     {
@@ -60,6 +61,7 @@ namespace LHC.Customer
         public ApproachShopState ApproachShopState { get; private set; }
         public OrderFoodState OrderState { get; private set; }
         public EatState EatState { get; private set; }
+        public LeaveState LeaveState { get; private set; }
 
         // ANIMATION 
         public CustomerAnimationManager AnimationManager { get; private set; }
@@ -69,9 +71,10 @@ namespace LHC.Customer
         
         public CustomerOrderManager OrderManager { get; private set; }
         
-        // DEBUGGING (Remove this queue to a manager class afterwards)
+        // =========================================================== DEBUGGING VARIABLES(Remove this queue to a manager class afterwards)
         public Transform m_DebugSpawnLocation;
         public Transform ObstacleDetectorTransform;
+        // =================================================================================================================================
 
         // GETTERS
         public CustomerData GetCustomerData() { return m_CustomerData; }
@@ -88,6 +91,7 @@ namespace LHC.Customer
             ApproachShopState = new ApproachShopState( this, m_CustomerData );
             OrderState = new OrderFoodState( this, m_CustomerData );
             EatState = new EatState(this, m_CustomerData);
+            LeaveState = new LeaveState(this, m_CustomerData);
         }
 
         private void Start()
@@ -110,6 +114,9 @@ namespace LHC.Customer
         private void OnDrawGizmos() 
         {
             Gizmos.DrawWireSphere( transform.position, m_CustomerData.locomotionData.wanderRadius );
+            if (WanderState == null)
+                return;
+            Handles.DrawWireCube(WanderState.WanderTargetPos, Vector3.one);
         }
 
         public Vector3 GetInteractionPosition()

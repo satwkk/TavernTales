@@ -8,8 +8,8 @@ namespace LHC.Customer.StateMachine
 {
     public class IdleState : BaseState
     {
-        private float m_MinIdleInterval = 5f;
-        private float m_MaxIdleInterval = 15f;
+        private float m_MinIdleInterval = 1f;
+        private float m_MaxIdleInterval = 2f;
         private float m_TargetIdleInterval;
         private float m_CurrentIdleTimer;
 

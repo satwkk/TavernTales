@@ -134,22 +134,22 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: e8196b76e6108b74aa9c9192f64f5003,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.83311695
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e8196b76e6108b74aa9c9192f64f5003,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e8196b76e6108b74aa9c9192f64f5003,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.55309683
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e8196b76e6108b74aa9c9192f64f5003,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e8196b76e6108b74aa9c9192f64f5003,
         type: 3}
@@ -159,7 +159,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: e8196b76e6108b74aa9c9192f64f5003,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -67.159
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e8196b76e6108b74aa9c9192f64f5003,
         type: 3}
@@ -277,8 +277,8 @@ MonoBehaviour:
     customerType: 0
     customerMood: 0
     locomotionData:
-      walkSpeed: 4
-      wanderRadius: 50
+      walkSpeed: 20
+      wanderRadius: 20
       rotationSpeed: 6
     interactionData:
       interactionRange: 5
@@ -287,6 +287,7 @@ MonoBehaviour:
         Name: 
         RequiredFoods: []
         PrepationDuration: 0
+        EatingDuration: 0
         isServed: 0
         CookedIngredientPrefab: {fileID: 0}
   PickupSocket: {fileID: 2540656027415573468}

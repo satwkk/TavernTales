@@ -13,7 +13,7 @@ namespace LHC.Customer.StateMachine
 
         public override void OnEnter()
         {
-            DebugSpawnCustomer();
+            // DebugSpawnCustomer();
             m_Customer.AnimationManager.PlayWalkingAnimation(true);
             m_Customer.StartCoroutine( FollowWayPoints( WayPointManager.instance.approachShopWayPoint, () =>
             {

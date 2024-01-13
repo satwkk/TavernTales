@@ -11,9 +11,11 @@ namespace LHC.Globals
         /// =========================== Animation variables ============================
         public const string PICKUP_ANIMATION_TRIGGER_CONDITION = "hasPickedUp";
         public const string SITTING_ANIMATION_TRIGGER_CONDITION = "isSitting";
+        public const string EATING_ANIMATION_TRIGGER_CONDITION = "isEating";
+
         public const int BASE_ANIMATION_LAYER = 0;
         public const int PICKUP_ANIMATION_LAYER = 1;
-        public const int DRINKING_ANIMATION_LAYER = 2;
+        public const int EATING_ANIMATION_LAYER = 2;
 
     }
 }

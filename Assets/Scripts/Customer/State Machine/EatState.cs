@@ -18,6 +18,10 @@ namespace LHC.Customer.StateMachine
         public bool HasReachedSeat { get; private set; } = false;
         
         public bool HasPickedUpFood { get; private set; } = false;
+
+        // VARIABLES TO PLAY THE EATING ANIMATION AT RANDOM INTERVALS
+        public float RandomEatingTimer;
+        public float CurrentEatingTimer;
         
         public CookedIngredient CookedOrder;
         
@@ -45,6 +49,8 @@ namespace LHC.Customer.StateMachine
 
         private void OnPickupComplete()
         {
+            // TODO: Have all seats stored in a global game manager class which will be a singleton
+
             // GET THE AVAILABLE TABLE
             SittingTable = Tavern.Instance.GetAvailableEatingTable();
 
@@ -97,13 +103,72 @@ namespace LHC.Customer.StateMachine
             m_Customer.AnimationManager.PlayWalkingAnimation(false);
             
             // SIT ON THE CHAIR
-            Seat.Sit(m_Customer);
+            Seat.Sit(m_Customer, OnSitOnSeat);
+        }
+
+        private void OnSitOnSeat()
+        {
+            // ENABLE THE EATING LAYER 
+            m_Customer.AnimationManager.Animator.SetLayerWeight(Constants.EATING_ANIMATION_LAYER, 1f);
 
             // START EATING TIMER
-            // PLAY EAT ANIMATION IN FREQUENT INTERVALS
-            // CHECK IF THERE ARE CUSTOMERS IN THE SITTING TABLE
-            // IF YES 
-            // LOOK AT THEM WITH YOUR HEAD (LOOK AT IK)
+            m_Customer.StartCoroutine(EatFoodTimer());
+        }
+
+        private IEnumerator EatFoodTimer()
+        {
+            var currentEatingTimer = 0;
+            var targetEatingTimer = CookedOrder.OriginalIngredient.IngredientData.EatingDuration;
+            RandomEatingTimer = Random.Range(3, 6);
+            Debug.LogError("Target eating timer: " + targetEatingTimer);
+            while (currentEatingTimer < targetEatingTimer)
+            {
+                Debug.LogError("Current eating timer: " + currentEatingTimer);
+                EatFood();
+                // TalkToNearByCustomers();
+
+                currentEatingTimer += 1;
+                yield return new WaitForSeconds(1f);
+            }
+            Debug.Log("eating complete");
+
+            yield return new WaitForSeconds(2f);
+            CleanUp();
+        }
+
+        private void EatFood()
+        {
+            if (CurrentEatingTimer >= RandomEatingTimer)
+            {
+                // TODO: This isn't working maybe reset the trigger in a animationstateinfo script or use boolean
+                m_Customer.AnimationManager.Animator.SetTrigger(Constants.EATING_ANIMATION_TRIGGER_CONDITION);
+                m_Customer.AnimationManager.Animator.ResetTrigger(Constants.EATING_ANIMATION_TRIGGER_CONDITION);
+                CurrentEatingTimer = 0f;
+                RandomEatingTimer = Random.Range(1, 5);
+            }
+            else 
+            {
+                CurrentEatingTimer += 1;
+            }
+        }
+
+        private void CleanUp()
+        {
+            Debug.LogWarning("Cleaning up");
+
+            // DESTROY THE COOKED INGREDIENT INSTANCE
+            GameObject.Destroy(CookedOrder.gameObject);
+
+            // STOP THE FOOD HOLD ANIMATION
+            m_Customer.AnimationManager.Animator.SetLayerWeight(Constants.EATING_ANIMATION_LAYER, 0f);
+            m_Customer.AnimationManager.Animator.SetLayerWeight(Constants.PICKUP_ANIMATION_LAYER, 0f);
+            m_Customer.AnimationManager.Animator.SetBool(Constants.PICKUP_ANIMATION_TRIGGER_CONDITION, false);
+
+            // STAND UP
+            m_Customer.AnimationManager.Animator.SetBool(Constants.SITTING_ANIMATION_TRIGGER_CONDITION, false);
+
+            // LEAVE THE SHOP
+            SwitchState(m_Customer.LeaveState);
         }
     }
 }

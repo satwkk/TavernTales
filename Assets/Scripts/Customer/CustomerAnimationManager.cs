@@ -48,7 +48,7 @@ public class CustomerAnimationManager : MonoBehaviour
 
     public void PlayEatingAnimation(Action after = null) 
     {
-        Animator.SetLayerWeight(Constants.DRINKING_ANIMATION_LAYER, 1f);
+        Animator.SetLayerWeight(Constants.EATING_ANIMATION_LAYER, 1f);
     }
     
     public void PlaySittingAnimation(bool value)

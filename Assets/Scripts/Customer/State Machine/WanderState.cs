@@ -19,7 +19,7 @@ namespace LHC.Customer.StateMachine {
             Debug.Log( "Entering wander state" );
             m_Customer.AnimationManager.PlayWalkingAnimation(true);
             WanderTargetPos = GetRandomCoordInAgentRadius();
-            // CanWander = IsNavigable(WanderTargetPos);
+            CanWander = IsNavigable(WanderTargetPos);
 
             // If the random coord in not navigable simply go back to idle state and try again
             // if (!CanWander)
@@ -35,9 +35,6 @@ namespace LHC.Customer.StateMachine {
             MoveTo(WanderTargetPos, m_CustomerData.locomotionData.walkSpeed, () => {
                 SwitchState(m_Customer.IdleState);
             });
-            // if (CanWander)
-            // {
-            // }
         }
 
         public override void OnExit()

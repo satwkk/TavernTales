@@ -4,10 +4,13 @@ using System;
 
 
 [Serializable]
-public class IngredientData {
+public class IngredientData 
+{
     public string Name;
     public List<Food> RequiredFoods;
     public float PrepationDuration;
+    public float EatingDuration;
+    public float CustomerWaitingTimer => PrepationDuration * 3;
     public Action OnServe;
     [SerializeField] private bool isServed;
     public bool IsServed { 
@@ -22,9 +25,6 @@ public class IngredientData {
         }
     }
 
-    // TODO: Maybe move this to customer data later because different kind of customers with different mood and race might have different waiting time.
-    public float CustomerWaitingTimer => PrepationDuration * 3;
-
     // CREATE A PREFAB WITH THE PREPARED INGREDIENT WHICH WILL BE SPAWNED WHEN THE INGREDIENT IS COOKED 
     public GameObject CookedIngredientPrefab;
 
@@ -36,9 +36,11 @@ public class IngredientData {
         this.OnServe = other.OnServe;
         this.isServed = other.isServed;
         this.CookedIngredientPrefab = other.CookedIngredientPrefab;
+        this.EatingDuration = other.EatingDuration;
     }
 
-    public bool HasFoodInRequiredItems(Food food) {
+    public bool HasFoodInRequiredItems(Food food) 
+    {
         foreach (var f in RequiredFoods) {
             if (f.name == food.name) {
                 return true;

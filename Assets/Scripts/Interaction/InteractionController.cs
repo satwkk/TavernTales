@@ -88,36 +88,21 @@ public class InteractionController : MonoBehaviour, IFoodOrderService, IPickable
 
     public void PickupItem(IPickable pickup) 
     {
-        // IF PLAYER HAS FOOD IN HANDS, HE CANNOT PICKUP ANYTHING ELSE
         if (HasPickupInHands()) 
         {
             Debug.LogError("Player already has something in his hand, cannot pickup anything else");
             return;
         }
 
-        // SETUP THE OWNER OF THE PICKUP
         m_CurrentPickup = pickup;
         m_CurrentPickup.Owner = this;
-
-        // SET THE POSITION OF THE PICKUP TO ITS SOCKET
         m_CurrentPickup.PickUp(PickupHolder);
-        // m_CurrentPickup.transform.position = PickupHolder.position;
-        // m_CurrentPickup.transform.SetParent(PickupHolder);
     }
 
     public void DropItem(IPickable pickup)
     {
         m_CurrentPickup.Drop(PickupHolder);
         m_CurrentPickup.Owner = null;
-        m_CurrentPickup = null;
-        // REMOVE THE OWNER AND PARENT OF THIS TRANSFORM
-        // m_CurrentPickup.SetOwner(null);
-        // m_CurrentPickup.transform.SetParent(null);
-
-        // ENABLE PHYSICS AND ADD A FORCE TO THE OBJECT
-        // m_CurrentPickup.EnablePhysics();
-
-        // NULL THE CURRENT PICKUP
         m_CurrentPickup = null;
     }
 
