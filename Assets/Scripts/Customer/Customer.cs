@@ -33,6 +33,7 @@ namespace LHC.Customer
     [System.Serializable]
     public struct InteractionData
     {
+        public Transform interactionRaycastPosition;
         public float interactionRange;
     }
 
@@ -70,6 +71,8 @@ namespace LHC.Customer
         public Transform PickupSocket;
         
         public CustomerOrderManager OrderManager { get; private set; }
+
+        public BoxCollider wanderingRadiusLimitCollider;
         
         // =========================================================== DEBUGGING VARIABLES(Remove this queue to a manager class afterwards)
         public Transform m_DebugSpawnLocation;
@@ -81,6 +84,7 @@ namespace LHC.Customer
 
         private void Awake()
         {
+            wanderingRadiusLimitCollider = GameObject.Find("Return To Position").GetComponent<BoxCollider>();
             CharacterController = GetComponent<CharacterController>();
             AnimationManager = GetComponent<CustomerAnimationManager>();
             OrderManager = GetComponent<CustomerOrderManager>();

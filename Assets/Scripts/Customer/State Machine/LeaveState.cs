@@ -15,7 +15,7 @@ namespace LHC.Customer.StateMachine
             m_Customer.AnimationManager.PlayWalkingAnimation(true);
 
             // FOLLOW THE WAYPOINTS TO LEAVE THE SHOP
-            m_Customer.StartCoroutine(FollowWayPoints(WayPointManager.instance.leaveShopWayPoint, OnLeaveShop));
+            m_Customer.StartCoroutine(FollowWayPoints(WayPointManager.instance.leaveShopWayPoint, () => SwitchState(m_Customer.IdleState)));
         }
 
         public override void OnExit()
@@ -24,12 +24,6 @@ namespace LHC.Customer.StateMachine
 
         public override void OnTick()
         {
-        }
-
-        private void OnLeaveShop()
-        {
-            Debug.Log("Left the shop going back to idle");
-            SwitchState(m_Customer.IdleState);
         }
     }
 }

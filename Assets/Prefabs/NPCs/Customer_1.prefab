@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2134072335835671131}
   m_Layer: 0
-  m_Name: Obstacle Detector
+  m_Name: Interaction Raycast Position
   m_TagString: Untagged
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 5217984982834027111}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.018, z: 0}
+  m_LocalPosition: {x: -0, y: 1.018, z: 0.171}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -277,10 +277,11 @@ MonoBehaviour:
     customerType: 0
     customerMood: 0
     locomotionData:
-      walkSpeed: 20
+      walkSpeed: 4
       wanderRadius: 20
       rotationSpeed: 6
     interactionData:
+      interactionRaycastPosition: {fileID: 2134072335835671131}
       interactionRange: 5
     currentIngredient:
       m_IngredientData:
