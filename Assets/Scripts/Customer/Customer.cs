@@ -74,11 +74,6 @@ namespace LHC.Customer
 
         public BoxCollider wanderingRadiusLimitCollider;
         
-        // =========================================================== DEBUGGING VARIABLES(Remove this queue to a manager class afterwards)
-        public Transform m_DebugSpawnLocation;
-        public Transform ObstacleDetectorTransform;
-        // =================================================================================================================================
-
         // GETTERS
         public CustomerData GetCustomerData() { return m_CustomerData; }
 

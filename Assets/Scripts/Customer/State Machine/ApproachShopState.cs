@@ -12,7 +12,6 @@ namespace LHC.Customer.StateMachine
 
         public override void OnEnter()
         {
-            // DebugSpawnCustomer();
             m_Customer.AnimationManager.PlayWalkingAnimation(true);
             m_Customer.StartCoroutine( FollowWayPoints( WayPointManager.instance.approachShopWayPoint, () =>
             {
@@ -29,13 +28,6 @@ namespace LHC.Customer.StateMachine
         {
             // CHECK FOR DOOR IN THE WAY
             CheckForShopDoor();
-        }
-
-        private void DebugSpawnCustomer()
-        {
-            m_Customer.CharacterController.enabled = false;
-            m_Customer.transform.position = m_Customer.m_DebugSpawnLocation.position;
-            m_Customer.CharacterController.enabled = true;
         }
 
         private void CheckForShopDoor()
