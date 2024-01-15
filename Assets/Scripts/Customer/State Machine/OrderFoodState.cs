@@ -1,6 +1,4 @@
-using System;
-using System.Collections;
-using Unity.VisualScripting;
+using LHC.Tavern;
 using UnityEngine;
 
 namespace LHC.Customer.StateMachine
@@ -18,7 +16,10 @@ namespace LHC.Customer.StateMachine
 
         public override void OnEnter()
         {
-            m_Customer.StartCoroutine(OrderFoodCoroutine());
+            IngredientToOrder = IngredientSpawner.Instance.CreateIngredient();
+            IngredientToOrder.IngredientData.OnServe += OnServe;
+            m_Customer.AnimationManager.PlayWalkingAnimation(true);
+            m_Customer.StartCoroutine(NavMeshMoveTo(OrderingTable.Instance.OrderingPosition, m_CustomerData.locomotionData.walkSpeed, 3, OnReachOrderingTable));
         }
 
         public override void OnExit()
@@ -29,20 +30,10 @@ namespace LHC.Customer.StateMachine
             m_Customer.AnimationManager.PlayWalkingAnimation(false);
         }
 
-        private IEnumerator OrderFoodCoroutine()
-        {
-            yield return new WaitForSeconds(1f);
-            m_Customer.AnimationManager.PlayWalkingAnimation(true);
-            m_Customer.StartCoroutine(FollowWayPoints(WayPointManager.instance.GetOrderFoodWayPoint(), after: () =>
-            {
-                IngredientToOrder = IngredientSpawner.Instance.CreateIngredient();
-                IngredientToOrder.IngredientData.OnServe += OnServe;
-
-                m_Customer.AnimationManager.PlayWalkingAnimation(false);
-                m_Customer.OrderManager.OrderFood(ingredientToOrder);
-
-                IsFoodOrdered = true;
-            }));
+        private void OnReachOrderingTable() {
+            m_Customer.AnimationManager.PlayWalkingAnimation(false);
+            m_Customer.OrderManager.OrderFood(ingredientToOrder);
+            IsFoodOrdered = true;
         }
 
         private void OnServe()
@@ -54,15 +45,14 @@ namespace LHC.Customer.StateMachine
 
         public override void OnTick()
         {
-            if (IsFoodOrdered == false)
+            if (!IsFoodOrdered)
                 return;
 
             if (CurrentWaitTimer >= IngredientToOrder.IngredientData.CustomerWaitingTimer && IngredientToOrder.IngredientData.IsServed.Equals(false))
             {
                 Debug.LogError("Customer has waited long enough and no food has been served");
                 IngredientToOrder.IngredientData.OnServe -= OnServe;
-                // SWITCH TO LEAVING STATE
-                SwitchState(m_Customer.IdleState);
+                SwitchState(m_Customer.AngryState);
             }
 
             CurrentWaitTimer += Time.deltaTime;

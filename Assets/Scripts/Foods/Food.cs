@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Food : InteractableBase
 {
-    private MeshRenderer m_Renderer;
-    private Collider m_Collider;
-
     protected virtual void Awake() 
     {
-        m_Renderer = GetComponent<MeshRenderer>();
-        m_Collider = GetComponent<Collider>();
+    }
+
+    private void Start ()
+    {
     }
 
     public override void Interact( IInteractionActor interactingActor ) 
@@ -23,4 +22,10 @@ public class Food : InteractableBase
 
         foodService.PickupFood(this);
     }
+
+    // public void OnSpawn() 
+    // {
+    //     rigidbody.isKinematic = false;
+    //     rigidbody.AddForce((Vector3.up + UnityEngine.Random.insideUnitSphere).normalized * 2f);
+    // }
 }

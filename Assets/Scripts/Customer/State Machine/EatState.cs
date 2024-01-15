@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace LHC.Customer.StateMachine
@@ -14,10 +13,6 @@ namespace LHC.Customer.StateMachine
         public Seat Seat { get; private set; }
         
         public Vector3 TargetPosition;
-        
-        public bool HasReachedSeat { get; private set; } = false;
-        
-        public bool HasPickedUpFood { get; private set; } = false;
 
         // VARIABLES TO PLAY THE EATING ANIMATION AT RANDOM INTERVALS
         public float RandomEatingTimer;
@@ -58,15 +53,10 @@ namespace LHC.Customer.StateMachine
             Seat = SittingTable.GetSeatForCustomer();
 
             // SET THE TARGET POSITION AND PLAY THE WALKING ANIMATION
-            TargetPosition = Seat.SeatingOffsetTransform.position;
-            TargetPosition.y = m_Customer.transform.position.y;
             m_Customer.AnimationManager.PlayWalkingAnimation(true);
+            TargetPosition = Seat.SeatingOffsetTransform.position;
 
-            // NOTE: IGNORE COLLISION WHILE GOING TO THE SEAT SINCE WE DO NOT HAVE ANY SENSOR FOR OBSTACLE AVOIDANCE FOR NOW
-            Physics.IgnoreCollision(m_Customer.CharacterController, Seat.gameObject.GetComponent<Collider>());
-            Physics.IgnoreCollision(m_Customer.CharacterController, SittingTable.transform.Find("Desk").gameObject.GetComponent<Collider>());
-
-            HasPickedUpFood = true;
+            m_Customer.StartCoroutine(NavMeshMoveTo(TargetPosition, m_CustomerData.locomotionData.walkSpeed, 3, OnReachSit));
             
             // AFTER PICKUP COMPLETE UNSUBSCRIBE FROM THE ANIMATION EVENT
             m_Customer.AnimationManager.OnPickupAttachDurationReached -= OnPickupAttachDurationReached; 
@@ -74,30 +64,17 @@ namespace LHC.Customer.StateMachine
 
         public override void OnExit()
         {
+            m_Customer.NavController.enabled = true;
         }
 
         public override void OnTick()
-        {
-            // IF PLAYER HAS NOT PLAYED THE PICKUP ANIMATION DO NOT MOVE HIM TO THE TABLE
-            if (!HasPickedUpFood) 
-                return;
-                
-            // MOVE TOWARDS THE TABLE AND SIT AT A SEAT
-            if (HasReachedSeat)
-                return;
-
-            MoveAndLookTowards(
-                TargetPosition,
-                Quaternion.LookRotation((TargetPosition - m_Customer.transform.position).normalized),
-                m_CustomerData.locomotionData.walkSpeed, 
-                m_CustomerData.locomotionData.rotationSpeed, 
-                OnReachSit
-            );
-        }
+        {}
 
         private void OnReachSit()
         {
-            HasReachedSeat = true;
+            // DISABLE THE NAVMESH TO DISABLE COLLISION WITH THE CHAIR
+            m_Customer.NavController.ResetPath();
+            m_Customer.NavController.enabled = false;
 
             // STOP THE WALKING ANIMATION
             m_Customer.AnimationManager.PlayWalkingAnimation(false);
@@ -125,8 +102,6 @@ namespace LHC.Customer.StateMachine
             {
                 Debug.LogError("Current eating timer: " + currentEatingTimer);
                 EatFood();
-                // TalkToNearByCustomers();
-
                 currentEatingTimer += 1;
                 yield return new WaitForSeconds(1f);
             }
@@ -142,7 +117,6 @@ namespace LHC.Customer.StateMachine
             {
                 // TODO: This isn't working maybe reset the trigger in a animationstateinfo script or use boolean
                 m_Customer.AnimationManager.Animator.SetTrigger(Constants.EATING_ANIMATION_TRIGGER_CONDITION);
-                m_Customer.AnimationManager.Animator.ResetTrigger(Constants.EATING_ANIMATION_TRIGGER_CONDITION);
                 CurrentEatingTimer = 0f;
                 RandomEatingTimer = Random.Range(1, 5);
             }
@@ -172,4 +146,3 @@ namespace LHC.Customer.StateMachine
         }
     }
 }
-

@@ -20,4 +20,8 @@ public class Ingredient {
     public Ingredient(IngredientData ingredientData) {
         m_IngredientData = ingredientData;
     }
+
+    public Ingredient(Ingredient other) {
+        this.m_IngredientData = other.m_IngredientData;
+    }
 }

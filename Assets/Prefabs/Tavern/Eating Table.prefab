@@ -114,7 +114,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4829135575088133209}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SKT_Sitting_Location
   m_TagString: Untagged
   m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 1365968706215404591}
   - component: {fileID: 8328345449032169220}
   - component: {fileID: 5559390060005034970}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Seat 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,7 +165,7 @@ Transform:
   m_GameObject: {fileID: 4232365893698046468}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 1.567}
+  m_LocalPosition: {x: 0, y: 0, z: 1.817}
   m_LocalScale: {x: 0.72713965, y: 1.681346, z: 2.2153852}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -265,7 +265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5151458478727015723}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SKT_Sitting_Location
   m_TagString: Untagged
   m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
@@ -300,7 +300,7 @@ GameObject:
   - component: {fileID: 8356930671712786322}
   - component: {fileID: 5401543979069363061}
   - component: {fileID: 7066552627435574971}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Seat 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -316,7 +316,7 @@ Transform:
   m_GameObject: {fileID: 7268842735071948422}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.464}
+  m_LocalPosition: {x: 0, y: 0, z: -1.726}
   m_LocalScale: {x: 0.72713965, y: 1.681346, z: 2.2153852}
   m_ConstrainProportionsScale: 0
   m_Children:

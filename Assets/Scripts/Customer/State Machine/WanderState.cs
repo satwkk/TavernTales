@@ -1,16 +1,14 @@
 using UnityEngine;
 using System;
+using System.Diagnostics;
+using UnityEngine.AI;
 
 namespace LHC.Customer.StateMachine 
 {
     public class WanderState : BaseState
     {
         public Vector3 WanderTargetPos { get; private set; }
-        public bool CanWander { get; private set; } = false;
-        public Vector3 RotatingVector;
-        public float CurrentYawRotation;
-        public float RotateAmount = 0.1f;
-        public bool isFoundOutSideVillage;
+        public bool isMoving = false;
 
         public WanderState( Customer controller, CustomerData customerData ) : base( controller, customerData )
         {
@@ -20,28 +18,30 @@ namespace LHC.Customer.StateMachine
         {
             m_Customer.AnimationManager.PlayWalkingAnimation(true);
             WanderTargetPos = GetRandomCoordInAgentRadius();
-            CanWander = IsNavigable(WanderTargetPos);
-            if (!CanWander)
-            {
-                SwitchState(m_Customer.IdleState);
-            }
+            m_Customer.NavController.SetDestination(WanderTargetPos);
+            m_Customer.NavController.speed = m_CustomerData.locomotionData.walkSpeed;
+            isMoving = true;
         }
 
         public override void OnTick()
         {
-            CheckForObstacle();
-            LookAt(Quaternion.LookRotation(WanderTargetPos - m_Customer.transform.position), m_CustomerData.locomotionData.rotationSpeed);
-            MoveTo(WanderTargetPos, m_CustomerData.locomotionData.walkSpeed, () => {
+            // IF THE AGENT IS NOT MOVING RETURN
+            if (!isMoving)
+                return;
+
+            // IF THE AGENT HAS REACHED THE DESTINATION THEN GO BACK TO IDLE
+            if (m_Customer.transform.position == WanderTargetPos) 
                 SwitchState(m_Customer.IdleState);
-            });
+
+            // LOOK TOWARDS THE TARGET YOU ARE MOVING TO
+            LookAt(Quaternion.LookRotation(WanderTargetPos - m_Customer.transform.position).normalized, m_CustomerData.locomotionData.rotationSpeed);
         }
 
         public override void OnExit()
         {
-            CanWander = false;
             WanderTargetPos = Vector3.zero;
-            RotatingVector = Vector3.zero;
-            CurrentYawRotation = 0f;
+            m_Customer.NavController.isStopped = true;
+            m_Customer.NavController.ResetPath();
             m_Customer.AnimationManager.PlayWalkingAnimation(false);
         }
 
@@ -58,7 +58,7 @@ namespace LHC.Customer.StateMachine
             bool hit = Physics.Raycast( coord + Vector3.up * 10f, Vector3.down * 10000f, out RaycastHit hitInfo );
             if (hit)
             {
-                if (!hitInfo.collider.CompareTag( "NotNavigable" ) && IsInsideVillageRadius(coord))
+                if (!hitInfo.collider.CompareTag( "NotNavigable" ))
                 {
                     return true;
                 }

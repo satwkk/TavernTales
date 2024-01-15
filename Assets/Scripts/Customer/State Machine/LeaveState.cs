@@ -1,8 +1,8 @@
+using System.Collections;
 using UnityEngine;
 
 namespace LHC.Customer.StateMachine
 {
-
     public class LeaveState : BaseState
     {
         public LeaveState(Customer controller, CustomerData customerData) : base(controller, customerData)
@@ -11,19 +11,25 @@ namespace LHC.Customer.StateMachine
 
         public override void OnEnter()
         {
+            Debug.Log("Entering leave state");
+
             // START THE WALKING ANIMATION
             m_Customer.AnimationManager.PlayWalkingAnimation(true);
 
-            // FOLLOW THE WAYPOINTS TO LEAVE THE SHOP
-            m_Customer.StartCoroutine(FollowWayPoints(WayPointManager.instance.leaveShopWayPoint, () => SwitchState(m_Customer.IdleState)));
+            m_Customer.StartCoroutine(NavMeshMoveTo(WayPointManager.instance.approachShopWayPoint[0].transform.position,
+            m_CustomerData.locomotionData.walkSpeed, 3, OnLeaveShop));
+        }
+
+        private void OnLeaveShop()
+        {
+            Debug.Log("Leaving shop successfull");
+            SwitchState(m_Customer.IdleState);
         }
 
         public override void OnExit()
-        {
-        }
+        { }
 
         public override void OnTick()
-        {
-        }
+        { }
     }
 }

@@ -39,6 +39,7 @@ public class CookingPot : InteractableBase, IFoodPlacer {
 
     public void CreateCookedIngredient(Ingredient ingredient)
     {
+        CleanUp();
         CurrentIngredient = ingredient;
         CurrentCookedIngredientObj = Instantiate(CurrentIngredient.IngredientData.CookedIngredientPrefab, transform.position, Quaternion.identity);
         CurrentCookedIngredient = CurrentCookedIngredientObj.GetComponent<CookedIngredient>();

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5991452345213944605}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SKT_FoodHolder
   m_TagString: Untagged
   m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 309707727785516349}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pickup_SKT
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8640779562656522735}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cam_SKT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 2490927799662436563}
   - component: {fileID: 3018724908358805610}
   - component: {fileID: 4831171620835697844}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Camera_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -249,7 +249,7 @@ GameObject:
   - component: {fileID: 2773414597126890330}
   - component: {fileID: 3552996195090122508}
   - component: {fileID: 4662407518302770559}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -373,7 +373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CameraHolder: {fileID: 8640779562656522735}
-  m_MovementSpeed: 10
+  m_MovementSpeed: 15
   m_Gravity: 9.8
   m_Sensitivity: 10
   m_bYawInverted: 1
@@ -416,6 +416,7 @@ MonoBehaviour:
         Name: 
         RequiredFoods: []
         PrepationDuration: 0
+        EatingDuration: 0
         isServed: 0
         CookedIngredientPrefab: {fileID: 0}
     foodsLeftToCompleteOrder: 0

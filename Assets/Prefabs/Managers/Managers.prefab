@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 054acc2d6c742de47b1987a85f8456a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  customers: []
 --- !u!114 &2161734383813688655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,11 +65,12 @@ MonoBehaviour:
   remainingDuration: {fileID: 0}
   m_CurrentIngredientData:
     m_IngredientData:
-      name: 
-      requiredFoods: []
-      prepareDuration: 0
+      Name: 
+      RequiredFoods: []
+      PrepationDuration: 0
+      EatingDuration: 0
       isServed: 0
-      canServe: 0
+      CookedIngredientPrefab: {fileID: 0}
 --- !u!114 &1770255660678638358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,21 +84,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AvailableIngredients:
-  - name: Soup
-    requiredFoods:
+  - Name: Soup
+    RequiredFoods:
     - {fileID: 3195257824349162321, guid: 66ffff5ba74c686449f7060aa94c3bc2, type: 3}
     - {fileID: 4124312778119444919, guid: d5b80bd7f120cb94786520358ed35825, type: 3}
-    prepareDuration: 50
+    PrepationDuration: 10
+    EatingDuration: 20
     isServed: 0
-    canServe: 0
-  - name: Chicken Soup
-    requiredFoods:
-    - {fileID: 3195257824349162321, guid: 66ffff5ba74c686449f7060aa94c3bc2, type: 3}
-    - {fileID: 4124312778119444919, guid: d5b80bd7f120cb94786520358ed35825, type: 3}
-    - {fileID: 6713582139175858878, guid: c78397c50169e6a49a28aec466c93ad6, type: 3}
-    prepareDuration: 50
-    isServed: 0
-    canServe: 0
+    CookedIngredientPrefab: {fileID: 6565064768905371, guid: 72c1bb30b061bc044af55a8f47b58e53,
+      type: 3}
 --- !u!114 &5127870080548669954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,13 +109,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   leaveShopWayPoint:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

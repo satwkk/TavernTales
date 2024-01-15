@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class IngredientUI : MonoBehaviour {
     public TextMeshProUGUI ingredientNameUI;
-    public TextMeshProUGUI ingredientDurationUI;
-    public Slider remainingDuration;
     public Ingredient m_CurrentIngredientData;
 
     private void OnEnable() {
@@ -19,7 +17,5 @@ public class IngredientUI : MonoBehaviour {
     public void OnIngredientCreateCallback(Ingredient currentIngredientData) {
         m_CurrentIngredientData = currentIngredientData;
         ingredientNameUI.text = m_CurrentIngredientData.IngredientData.Name;
-        ingredientDurationUI.text = m_CurrentIngredientData.IngredientData.PrepationDuration.ToString();
-        remainingDuration.value = 1f;
     }
 }

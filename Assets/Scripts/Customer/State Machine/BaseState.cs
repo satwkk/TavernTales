@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework;
+using UnityEditor.MPE;
 using UnityEditor.Rendering;
 using UnityEngine;
 
@@ -31,7 +33,7 @@ namespace LHC.Customer.StateMachine
         }
 
 
-        protected delegate void OnMovedToPosition();
+        public delegate void OnMovedToPosition();
         protected void MoveTo(Vector3 position, float speed, OnMovedToPosition after = null)
         {
             if (HasReachedTargetPosition(position))
@@ -44,16 +46,7 @@ namespace LHC.Customer.StateMachine
             m_Customer.CharacterController.Move(motion * speed * Time.deltaTime);
         }
 
-        protected IEnumerator MoveToCoroutine(Vector3 position, float speed, OnMovedToPosition after = null)
-        {
-            while (!HasReachedTargetPosition(position))
-            {
-                MoveTo(position, speed, after);
-                yield return null;
-            }
-        }
-
-        protected delegate void OnRotationFinish();
+        public delegate void OnRotationFinish();
         protected void LookAt(Quaternion rotation, float speed, OnRotationFinish after = null)
         {
             if ( m_Customer.transform.rotation == rotation )
@@ -68,6 +61,55 @@ namespace LHC.Customer.StateMachine
         {
             LookAt(rotation, rotateSpeed, onRotate);
             MoveTo(position, moveSpeed, onMove);
+        }
+
+        protected IEnumerator NavMeshMoveTo(Vector3 position, float speed, int tick = 3, OnMovedToPosition after = null) 
+        {
+            var t = tick;
+            m_Customer.NavController.ResetPath();
+            m_Customer.NavController.SetDestination(position);
+            m_Customer.NavController.speed = speed;
+
+            while (--t > 0) {
+                yield return null;
+            }
+
+            while (m_Customer.NavController.remainingDistance >= .2f) {
+                //LookAt(Quaternion.LookRotation(m_Customer.NavController.velocity - m_Customer.transform.position).normalized, m_CustomerData.locomotionData.rotationSpeed);
+                LookAt(Quaternion.LookRotation(position - m_Customer.transform.position).normalized, m_CustomerData.locomotionData.rotationSpeed);
+                Debug.Log(m_Customer.NavController.remainingDistance);
+                yield return null;
+            }
+
+            after?.Invoke();
+        }
+
+        //protected IEnumerator MoveToCoroutine(Vector3 position, float speed, bool orientRotationToMovement = false, OnMovedToPosition after = null)
+        public struct MoveConfig {
+            public Vector3 position;
+            public float moveSpeed;
+            public bool orientRotationToMovement;
+            public float rotateSpeed;
+            public OnMovedToPosition onMoveCallback;
+            public OnRotationFinish onRotationFinish;
+        }
+
+        protected IEnumerator MoveToCoroutine(MoveConfig settings)
+        {
+            while (!HasReachedTargetPosition(settings.position))
+            {
+                if (settings.orientRotationToMovement) {
+                    MoveAndLookTowards(settings.position, Quaternion.LookRotation(settings.position - m_Customer.transform.position).normalized,
+                    settings.moveSpeed,
+                    settings.rotateSpeed,
+                    settings.onMoveCallback,
+                    settings.onRotationFinish
+                    );
+                } else {
+                    MoveTo(settings.position, settings.moveSpeed, settings.onMoveCallback);
+                }
+                yield return null;
+            }
         }
 
         protected IEnumerator FollowWayPoints(List<WayPoint> wayPoints, Action after = null) 
@@ -114,7 +156,7 @@ namespace LHC.Customer.StateMachine
             return targetAngle;
         }
 
-        private bool HasReachedTargetPosition( Vector3 targetPos )
+        protected bool HasReachedTargetPosition( Vector3 targetPos )
         {
             return Vector3.SqrMagnitude( m_Customer.transform.position - targetPos ) < 0.2f * 0.2f;
         }

@@ -5,18 +5,18 @@ namespace LHC.Customer.StateMachine
 {
     public class ApproachShopState : BaseState
     {
+        public Vector3 target;
 
-        public ApproachShopState( Customer controller, CustomerData customerData) : base( controller, customerData )
+        public ApproachShopState( Customer controller, CustomerData customerData, Transform shopEntryPosition) : base( controller, customerData )
         {
+            this.target = shopEntryPosition.position;
         }
 
         public override void OnEnter()
         {
+            // GET THE WAYPOINTS
             m_Customer.AnimationManager.PlayWalkingAnimation(true);
-            m_Customer.StartCoroutine( FollowWayPoints( WayPointManager.instance.approachShopWayPoint, () =>
-            {
-                SwitchState( m_Customer.OrderState );
-            } ) );
+            m_Customer.StartCoroutine(NavMeshMoveTo(this.target, this.m_CustomerData.locomotionData.walkSpeed, 3, after: OnReachShop));
         }
 
         public override void OnExit()
@@ -25,14 +25,16 @@ namespace LHC.Customer.StateMachine
         }
 
         public override void OnTick()
+        { }
+
+        private void OnReachShop() 
         {
-            // CHECK FOR DOOR IN THE WAY
-            CheckForShopDoor();
+            Debug.Log("Reached the target waypoint in shop");
+            SwitchState(m_Customer.OrderState);
         }
 
         private void CheckForShopDoor()
         {
-            // if (Physics.Raycast(m_Customer.transform.position, m_Customer.transform.forward, out RaycastHit hitInfo, m_CustomerData.interactionData.interactionRange))
             if (Physics.Raycast(
                 m_CustomerData.interactionData.interactionRaycastPosition.position, 
                 m_CustomerData.interactionData.interactionRaycastPosition.forward, 

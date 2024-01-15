@@ -4,8 +4,10 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class IngredientSpawner : MonoBehaviour {
-    public List<IngredientData> m_AvailableIngredients;
+    // public List<IngredientData> m_AvailableIngredients;
+    public List<Ingredient> m_AvailableIngredients;
     public static Action<Ingredient> OnIngredientCreate_Event;
+    public Ingredient chosenIngredient;
 
     public static IngredientSpawner Instance { get; set; }
 
@@ -22,10 +24,13 @@ public class IngredientSpawner : MonoBehaviour {
     }
 
     public Ingredient CreateIngredient() {
-        var ingredientSO = m_AvailableIngredients[UnityEngine.Random.Range(0, m_AvailableIngredients.Count)];
-        IngredientData ingData = new IngredientData(ingredientSO);
-        Ingredient ingredient = new Ingredient(ingData);
-        OnIngredientCreate_Event?.Invoke( ingredient );
-        return ingredient;
+        if (chosenIngredient != null)
+            chosenIngredient = null;
+
+        var randomIngredient = m_AvailableIngredients[UnityEngine.Random.Range(0, m_AvailableIngredients.Count)];
+        // IngredientData ingData = new IngredientData(ingredientSO);
+        chosenIngredient = new Ingredient(randomIngredient);
+        OnIngredientCreate_Event?.Invoke( chosenIngredient );
+        return chosenIngredient;
     }
 }
