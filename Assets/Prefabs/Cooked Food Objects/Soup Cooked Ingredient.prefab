@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5065959404837017306}
-  - component: {fileID: 98893433182851437}
   - component: {fileID: 5289189928059151672}
+  - component: {fileID: 3512480494278398126}
   m_Layer: 0
   m_Name: Soup Cooked Ingredient
   m_TagString: Untagged
@@ -34,7 +34,21 @@ Transform:
   - {fileID: 37667535067755727}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &98893433182851437
+--- !u!114 &5289189928059151672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6565064768905371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9152764f904248e4b8dd113559bd6616, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Id: 
+  OriginalIngredient: {fileID: 0}
+--- !u!65 &3512480494278398126
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -53,29 +67,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.27752686, y: 0.12972641, z: 0.26550293}
-  m_Center: {x: 0.002380371, y: 0.058519363, z: 0.0019836426}
---- !u!114 &5289189928059151672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6565064768905371}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9152764f904248e4b8dd113559bd6616, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Id: 
-  OriginalIngredient:
-    m_IngredientData:
-      Name: 
-      RequiredFoods: []
-      PrepationDuration: 0
-      EatingDuration: 0
-      isServed: 0
-      CookedIngredientPrefab: {fileID: 0}
+  m_Size: {x: 0.2370809, y: 0.13471222, z: 0.25836182}
+  m_Center: {x: -0.0014343262, y: 0.05311203, z: -0.0010070801}
 --- !u!1001 &508743003976389412
 PrefabInstance:
   m_ObjectHideFlags: 0

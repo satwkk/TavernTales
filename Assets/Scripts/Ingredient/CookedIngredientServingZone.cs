@@ -34,11 +34,8 @@ public class CookedIngredientServingZone : InteractableBase, IFoodPlacer
         }
         
         CookedIngredient = cookedIngredient;
-
         orderService.PlaceFood(this);
-        
-        CookedIngredient.OriginalIngredient.IngredientData.IsServed = true;
-        
+        CookedIngredient.OriginalIngredient.IsServed = true;
         OnCookedIngredientPlaced?.Invoke(CookedIngredient);
     }
 

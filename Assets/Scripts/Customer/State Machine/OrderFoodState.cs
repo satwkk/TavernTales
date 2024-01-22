@@ -1,46 +1,59 @@
 using LHC.Tavern;
+using UI.Customer;
 using UnityEngine;
 
 namespace LHC.Customer.StateMachine
 {
     public class OrderFoodState : BaseState
     {
-        public bool IsFoodOrdered { get; set; }
-        public Ingredient ingredientToOrder;
-        public Ingredient IngredientToOrder { get => ingredientToOrder; set => ingredientToOrder = value; }
-        public float CurrentWaitTimer { get; private set; } = 0f;
+        private bool IsFoodOrdered { get; set; }
+        private float CurrentWaitTimer { get; set; } = 0f;
+        private Ingredient ingredientToOrder;
+        private FoodOrderUI foodOrderUI;
 
-        public OrderFoodState(Customer controller, CustomerData customerData) : base( controller, customerData )
+        public OrderFoodState(Customer controller, CustomerData customerData, FoodOrderUI foodOrderUI) : base( controller, customerData )
         {
+            this.foodOrderUI = foodOrderUI;
         }
 
         public override void OnEnter()
         {
-            IngredientToOrder = IngredientSpawner.Instance.CreateIngredient();
-            IngredientToOrder.IngredientData.OnServe += OnServe;
-            m_Customer.AnimationManager.PlayWalkingAnimation(true);
-            m_Customer.StartCoroutine(NavMeshMoveTo(OrderingTable.Instance.OrderingPosition, m_CustomerData.locomotionData.walkSpeed, 3, OnReachOrderingTable));
+            customer.AnimationManager.PlayWalkingAnimation(true);
+            customer.StartCoroutine(
+                NavMeshMoveToCoro(
+                    OrderingTable.Instance.orderingLocationTransform.position, 
+                    customerData.locomotionData.walkSpeed, 
+                    3, 
+                    OnReachOrderingTable
+                )
+            );
         }
 
         public override void OnExit()
         {
             IsFoodOrdered = false;
-            IngredientToOrder = null;
+            ingredientToOrder = null;
             CurrentWaitTimer = 0f;
-            m_Customer.AnimationManager.PlayWalkingAnimation(false);
+            customer.AnimationManager.PlayWalkingAnimation(false);
         }
 
-        private void OnReachOrderingTable() {
-            m_Customer.AnimationManager.PlayWalkingAnimation(false);
-            m_Customer.OrderManager.OrderFood(ingredientToOrder);
+        private void OnReachOrderingTable()
+        {
+            ingredientToOrder = IngredientSpawner.Instance.CreateIngredient();
+            ingredientToOrder.OnServe += OnServe;
+            foodOrderUI.CraftUI(ingredientToOrder);
+            foodOrderUI.Show();
+            customer.AnimationManager.PlayWalkingAnimation(false);
+            customer.OrderManager.OrderFood(ingredientToOrder);
             IsFoodOrdered = true;
         }
 
         private void OnServe()
         {
             Debug.Log("Food has been served");
-            IngredientToOrder.IngredientData.OnServe -= OnServe;
-            SwitchState(m_Customer.EatState);
+            foodOrderUI.Hide();
+            ingredientToOrder.OnServe -= OnServe;
+            SwitchState(customer.EatState);
         }
 
         public override void OnTick()
@@ -48,11 +61,12 @@ namespace LHC.Customer.StateMachine
             if (!IsFoodOrdered)
                 return;
 
-            if (CurrentWaitTimer >= IngredientToOrder.IngredientData.CustomerWaitingTimer && IngredientToOrder.IngredientData.IsServed.Equals(false))
+            if (CurrentWaitTimer >= ingredientToOrder.IngredientData.CustomerWaitingTimer && ingredientToOrder.IsServed.Equals(false))
             {
                 Debug.LogError("Customer has waited long enough and no food has been served");
-                IngredientToOrder.IngredientData.OnServe -= OnServe;
-                SwitchState(m_Customer.AngryState);
+                foodOrderUI.Hide();
+                ingredientToOrder.OnServe -= OnServe;
+                SwitchState(customer.AngryState);
             }
 
             CurrentWaitTimer += Time.deltaTime;

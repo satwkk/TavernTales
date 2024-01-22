@@ -14,15 +14,15 @@ namespace LHC.Customer.StateMachine
 
         public override void OnEnter()
         {
-            m_Customer.StartCoroutine(LeaveShopCoroutine());
+            customer.StartCoroutine(LeaveShopCoroutine());
         }
 
         private IEnumerator LeaveShopCoroutine()
         {
-            m_Customer.AnimationManager.Animator.SetTrigger(Constants.ANGRY_ANIMATION_TRIGGER_CONDITION);
+            customer.AnimationManager.Animator.SetTrigger(Constants.ANGRY_ANIMATION_TRIGGER_CONDITION);
             yield return new WaitForSeconds(1.6f);
             Debug.LogError("now going to leaving state");
-            SwitchState(m_Customer.LeaveState);
+            SwitchState(customer.LeaveState);
         }
 
         public override void OnExit()

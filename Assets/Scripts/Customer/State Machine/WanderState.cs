@@ -1,14 +1,12 @@
 using UnityEngine;
-using System;
-using System.Diagnostics;
 using UnityEngine.AI;
 
 namespace LHC.Customer.StateMachine 
 {
     public class WanderState : BaseState
     {
-        public Vector3 WanderTargetPos { get; private set; }
-        public bool isMoving = false;
+        public Vector3 wanderTargetPos;
+        private bool isMoving = false;
 
         public WanderState( Customer controller, CustomerData customerData ) : base( controller, customerData )
         {
@@ -16,11 +14,22 @@ namespace LHC.Customer.StateMachine
 
         public override void OnEnter()
         {
-            m_Customer.AnimationManager.PlayWalkingAnimation(true);
-            WanderTargetPos = GetRandomCoordInAgentRadius();
-            m_Customer.NavController.SetDestination(WanderTargetPos);
-            m_Customer.NavController.speed = m_CustomerData.locomotionData.walkSpeed;
-            isMoving = true;
+            customer.AnimationManager.PlayWalkingAnimation(true);
+            wanderTargetPos = GetRandomCoordInAgentRadius();
+            bool canReach = NavMesh.SamplePosition(wanderTargetPos, out NavMeshHit hit, 20.0f, 1);
+            Debug.Log("Can Reach: " + canReach);
+
+            if (IsNavigable(wanderTargetPos)) 
+            {
+                customer.NavController.SetDestination(wanderTargetPos);
+                customer.NavController.speed = customerData.locomotionData.walkSpeed;
+                isMoving = true;
+            }
+            else 
+            {
+                UnityEngine.Debug.LogError("Going back to idle");
+                SwitchState(customer.IdleState);
+            }
         }
 
         public override void OnTick()
@@ -29,27 +38,36 @@ namespace LHC.Customer.StateMachine
             if (!isMoving)
                 return;
 
+            if (ObstacleInPath() || HasReachedTargetPosition(wanderTargetPos))
+            {
+                isMoving = false;
+                SwitchState(customer.IdleState);
+            }
+
             // IF THE AGENT HAS REACHED THE DESTINATION THEN GO BACK TO IDLE
-            if (m_Customer.transform.position == WanderTargetPos) 
-                SwitchState(m_Customer.IdleState);
+            // if (customer.transform.position == wanderTargetPos) 
+            // {
+            //     isMoving = false;
+            //     SwitchState(customer.IdleState);
+            // }
 
             // LOOK TOWARDS THE TARGET YOU ARE MOVING TO
-            LookAt(Quaternion.LookRotation(WanderTargetPos - m_Customer.transform.position).normalized, m_CustomerData.locomotionData.rotationSpeed);
+            LookAt(Quaternion.LookRotation(wanderTargetPos - customer.transform.position).normalized, customerData.locomotionData.rotationSpeed);
         }
 
         public override void OnExit()
         {
-            WanderTargetPos = Vector3.zero;
-            m_Customer.NavController.isStopped = true;
-            m_Customer.NavController.ResetPath();
-            m_Customer.AnimationManager.PlayWalkingAnimation(false);
+            wanderTargetPos = Vector3.zero;
+            customer.NavController.isStopped = true;
+            customer.NavController.ResetPath();
+            customer.AnimationManager.PlayWalkingAnimation(false);
         }
 
         private Vector3 GetRandomCoordInAgentRadius()
         {
-            var randomPos = UnityEngine.Random.insideUnitSphere * m_CustomerData.locomotionData.wanderRadius;
-            var targetPos = m_Customer.transform.position + randomPos;
-            targetPos.y = m_Customer.transform.position.y;
+            var randomPos = UnityEngine.Random.insideUnitSphere * customerData.locomotionData.wanderRadius;
+            var targetPos = customer.transform.position + randomPos;
+            targetPos.y = customer.transform.position.y;
             return targetPos;
         }
 
@@ -66,20 +84,14 @@ namespace LHC.Customer.StateMachine
             return false;
         }
 
-        private void CheckForObstacle()
+        private bool ObstacleInPath()
         {
-            if ( Physics.Raycast( m_Customer.transform.position, m_Customer.transform.forward, out RaycastHit hitInfo, 2f ) )
+            // if ( Physics.Raycast( customer.transform.position, customer.transform.forward, out RaycastHit hitInfo, 2f ) )
+            if (Physics.SphereCast(customer.transform.position, customer.NavController.radius, customer.transform.forward, out RaycastHit hitInfo, 2.0f))
             {
-                WanderTargetPos = GetRandomCoordInAgentRadius();
+                return true;
             }
-        }
-
-        private bool IsInsideVillageRadius(Vector3 coord)
-        {
-            if (!m_Customer.wanderingRadiusLimitCollider.bounds.Contains(coord))
-                return false;
-                
-            return true;
+            return false;
         }
     }
 }

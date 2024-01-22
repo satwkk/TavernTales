@@ -1,19 +1,16 @@
-using System.Collections.Generic;
+using LHC.Globals;
 using UnityEngine;
+using UnityEditor;
 
 namespace LHC.Tavern
 {
-    using System.Collections;
     using LHC.Customer;
-    using UnityEditor;
-
+    
     public class OrderingTable : MonoBehaviour
     {
         public static OrderingTable Instance;
-        private Vector3 m_OrderOffsetPosition = new Vector3(6.69999981f, 1.60000002f, -13.3999996f);
-        public Vector3 OrderingPosition => m_OrderOffsetPosition;
-
-        [field: SerializeField] public Customer CurrentOrderingCustomer { get; private set; }
+        public Transform orderingLocationTransform;
+        public Customer currentOrderingCustomer;
 
         private void Awake()
         {
@@ -22,6 +19,8 @@ namespace LHC.Tavern
                 Instance = this;
                 DontDestroyOnLoad(this);
             }
+
+            orderingLocationTransform = transform.Find(Constants.ORDERING_ZONE_SOCKET).transform;
         }
 
         private void Start() {
@@ -29,7 +28,7 @@ namespace LHC.Tavern
 
         public bool IsOccupied()
         {
-            return CurrentOrderingCustomer != null;
+            return currentOrderingCustomer != null;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -37,7 +36,7 @@ namespace LHC.Tavern
             var customer = other.GetComponent<Customer>();
             if (!IsOccupied())
             {
-                CurrentOrderingCustomer = customer;
+                currentOrderingCustomer = customer;
             }
         }
 
@@ -45,14 +44,14 @@ namespace LHC.Tavern
         private void OnTriggerExit(Collider other)
         {
             var customer = other.GetComponent<Customer>();
-            if (CurrentOrderingCustomer != null && CurrentOrderingCustomer == customer)
+            if (currentOrderingCustomer != null && currentOrderingCustomer == customer)
             {
-                CurrentOrderingCustomer = null;
+                currentOrderingCustomer = null;
             }
         }
 
         private void OnDrawGizmos() {
-            Handles.DrawWireCube(m_OrderOffsetPosition, Vector3.one * .2f);
+            Handles.DrawWireCube(orderingLocationTransform.position, Vector3.one * .2f);
         }
     }
 }

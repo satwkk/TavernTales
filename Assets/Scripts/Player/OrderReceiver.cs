@@ -71,8 +71,8 @@ public class OrderReceiver : MonoBehaviour
 
     private bool IsOrderReadyToServe() 
     {
-        return CurrentOrderData.CurrentCookingTimer >= CurrentOrderData.ingredientToCook.IngredientData.PrepationDuration &&  
-            !CurrentOrderData.ingredientToCook.IngredientData.IsServed;
+        return CurrentOrderData.CurrentCookingTimer >= CurrentOrderData.ingredientToCook.IngredientData.PreparationDuration &&  
+            !CurrentOrderData.ingredientToCook.IsServed;
     }
 
     private bool HasAllRequiredFoodsAdded() 

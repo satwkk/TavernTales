@@ -61,16 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ingredientNameUI: {fileID: 0}
-  ingredientDurationUI: {fileID: 0}
-  remainingDuration: {fileID: 0}
-  m_CurrentIngredientData:
-    m_IngredientData:
-      Name: 
-      RequiredFoods: []
-      PrepationDuration: 0
-      EatingDuration: 0
-      isServed: 0
-      CookedIngredientPrefab: {fileID: 0}
+  m_CurrentIngredientData: {fileID: 0}
 --- !u!114 &1770255660678638358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,15 +75,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AvailableIngredients:
-  - Name: Soup
-    RequiredFoods:
-    - {fileID: 3195257824349162321, guid: 66ffff5ba74c686449f7060aa94c3bc2, type: 3}
-    - {fileID: 4124312778119444919, guid: d5b80bd7f120cb94786520358ed35825, type: 3}
-    PrepationDuration: 10
-    EatingDuration: 20
-    isServed: 0
-    CookedIngredientPrefab: {fileID: 6565064768905371, guid: 72c1bb30b061bc044af55a8f47b58e53,
-      type: 3}
+  - {fileID: 399848924469761712, guid: cd5a8212f1be2e14baf732f4e628913c, type: 3}
+  chosenIngredient: {fileID: 0}
 --- !u!114 &5127870080548669954
 MonoBehaviour:
   m_ObjectHideFlags: 0

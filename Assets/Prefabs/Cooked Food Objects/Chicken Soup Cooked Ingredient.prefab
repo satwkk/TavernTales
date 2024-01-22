@@ -92,8 +92,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2020645332710932297}
-  - component: {fileID: 7896479998079287749}
   - component: {fileID: 4550214163371889828}
+  - component: {fileID: 8596064218671007952}
   m_Layer: 0
   m_Name: Chicken Soup Cooked Ingredient
   m_TagString: Untagged
@@ -118,7 +118,21 @@ Transform:
   - {fileID: 8216903225751564087}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &7896479998079287749
+--- !u!114 &4550214163371889828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8206943764680254142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9152764f904248e4b8dd113559bd6616, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Id: 
+  OriginalIngredient: {fileID: 0}
+--- !u!65 &8596064218671007952
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,29 +151,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.3017578, y: 0.1047554, z: 0.2848816}
-  m_Center: {x: 0.0037841797, y: 0.059595108, z: 0.0011444092}
---- !u!114 &4550214163371889828
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8206943764680254142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9152764f904248e4b8dd113559bd6616, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Id: 
-  OriginalIngredient:
-    m_IngredientData:
-      Name: 
-      RequiredFoods: []
-      PrepationDuration: 0
-      EatingDuration: 0
-      isServed: 0
-      CookedIngredientPrefab: {fileID: 0}
+  m_Size: {x: 0.2932536, y: 0.15719604, z: 0.27085373}
+  m_Center: {x: 0.0026855469, y: 0.054847717, z: -0.0021260432}
 --- !u!1001 &8183179687660259589
 PrefabInstance:
   m_ObjectHideFlags: 0

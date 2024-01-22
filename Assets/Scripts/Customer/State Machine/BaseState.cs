@@ -1,22 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
-using UnityEditor.MPE;
-using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace LHC.Customer.StateMachine
 {
     public abstract class BaseState : IState
     {
-        protected Customer m_Customer;
-        protected CustomerData m_CustomerData;
+        protected Customer customer;
+        protected CustomerData customerData;
 
         public BaseState(Customer controller, CustomerData customerData)
         {
-            m_Customer = controller;
-            m_CustomerData = customerData;
+            customer = controller;
+            this.customerData = customerData;
         }
 
         public abstract void OnEnter();
@@ -27,11 +25,10 @@ namespace LHC.Customer.StateMachine
 
         public void SwitchState(IState newState)
         {
-            m_Customer.m_CustomerData.currentState.OnExit();
-            m_Customer.m_CustomerData.currentState = newState;
-            m_Customer.m_CustomerData.currentState.OnEnter();
+            customer.GetCustomerData().currentState.OnExit();
+            customer.GetCustomerData().currentState = newState;
+            customer.GetCustomerData().currentState.OnEnter();
         }
-
 
         public delegate void OnMovedToPosition();
         protected void MoveTo(Vector3 position, float speed, OnMovedToPosition after = null)
@@ -42,19 +39,19 @@ namespace LHC.Customer.StateMachine
                 return;
             }
 
-            var motion = ( position - m_Customer.transform.position ).normalized;
-            m_Customer.CharacterController.Move(motion * speed * Time.deltaTime);
+            var motion = ( position - customer.transform.position ).normalized;
+            customer.characterController.Move(motion * speed * Time.deltaTime);
         }
 
         public delegate void OnRotationFinish();
         protected void LookAt(Quaternion rotation, float speed, OnRotationFinish after = null)
         {
-            if ( m_Customer.transform.rotation == rotation )
+            if ( customer.transform.rotation == rotation )
             {
                 after?.Invoke();
             }
 
-            m_Customer.transform.rotation = Quaternion.Slerp(m_Customer.transform.rotation, rotation, speed * Time.deltaTime);
+            customer.transform.rotation = Quaternion.Slerp(customer.transform.rotation, rotation, speed * Time.deltaTime);
         }
 
         protected void MoveAndLookTowards(Vector3 position, Quaternion rotation, float moveSpeed, float rotateSpeed, OnMovedToPosition onMove = null, OnRotationFinish onRotate = null)
@@ -63,53 +60,53 @@ namespace LHC.Customer.StateMachine
             MoveTo(position, moveSpeed, onMove);
         }
 
-        protected IEnumerator NavMeshMoveTo(Vector3 position, float speed, int tick = 3, OnMovedToPosition after = null) 
+        protected IEnumerator NavMeshMoveToCoro(Vector3 position, float speed, int tick = 3, OnMovedToPosition after = null) 
         {
             var t = tick;
-            m_Customer.NavController.ResetPath();
-            m_Customer.NavController.SetDestination(position);
-            m_Customer.NavController.speed = speed;
+            customer.NavController.ResetPath();
+            customer.NavController.SetDestination(position);
+            customer.NavController.speed = speed;
 
             while (--t > 0) {
                 yield return null;
             }
 
-            while (m_Customer.NavController.remainingDistance >= .2f) {
+            while (customer.NavController.remainingDistance >= .2f) {
                 //LookAt(Quaternion.LookRotation(m_Customer.NavController.velocity - m_Customer.transform.position).normalized, m_CustomerData.locomotionData.rotationSpeed);
-                LookAt(Quaternion.LookRotation(position - m_Customer.transform.position).normalized, m_CustomerData.locomotionData.rotationSpeed);
-                Debug.Log(m_Customer.NavController.remainingDistance);
+                LookAt(Quaternion.LookRotation(position - customer.transform.position).normalized, customerData.locomotionData.rotationSpeed);
+                Debug.Log(customer.NavController.remainingDistance);
                 yield return null;
             }
 
             after?.Invoke();
         }
 
-        //protected IEnumerator MoveToCoroutine(Vector3 position, float speed, bool orientRotationToMovement = false, OnMovedToPosition after = null)
-        public struct MoveConfig {
-            public Vector3 position;
-            public float moveSpeed;
-            public bool orientRotationToMovement;
-            public float rotateSpeed;
-            public OnMovedToPosition onMoveCallback;
-            public OnRotationFinish onRotationFinish;
-        }
-
-        protected IEnumerator MoveToCoroutine(MoveConfig settings)
+        protected IEnumerator NavMeshFollowWayPoints(List<WayPoint> wayPoints, float speed, int tick = 3, OnMovedToPosition after = null) 
         {
-            while (!HasReachedTargetPosition(settings.position))
+            var currentIndex = 0;
+            while (currentIndex < wayPoints.Count)
             {
-                if (settings.orientRotationToMovement) {
-                    MoveAndLookTowards(settings.position, Quaternion.LookRotation(settings.position - m_Customer.transform.position).normalized,
-                    settings.moveSpeed,
-                    settings.rotateSpeed,
-                    settings.onMoveCallback,
-                    settings.onRotationFinish
-                    );
-                } else {
-                    MoveTo(settings.position, settings.moveSpeed, settings.onMoveCallback);
+                var wayPoint = wayPoints[currentIndex++];
+                var t = tick;
+                customer.NavController.destination = wayPoint.transform.position;
+                customer.NavController.speed = speed;
+
+                // Delay before checking for remainingDistance as per navmeshagent docs
+                while (--t > 0) {
+                    yield return null;
                 }
-                yield return null;
+
+                while (customer.NavController.remainingDistance >= .2f) {
+                    // LookAt(Quaternion.LookRotation(wayPoint.transform.position - customer.transform.position).normalized, customerData.locomotionData.rotationSpeed);
+                    yield return null;
+                }
+
+                // A millisecond delay before setting the destination again
+                yield return new WaitForSeconds(.1f);
             }
+
+            after?.Invoke();
+            yield return null;
         }
 
         protected IEnumerator FollowWayPoints(List<WayPoint> wayPoints, Action after = null) 
@@ -122,15 +119,15 @@ namespace LHC.Customer.StateMachine
 
                 // MODIFY THE Y AXIS TO ALIGN WITH PLAYER OR ELSE THE PLAYER WILL START WALKING IN AIR
                 var currentWayPointFinalPos = currentWayPoint.transform.position;
-                currentWayPointFinalPos.y = m_Customer.transform.position.y;
+                currentWayPointFinalPos.y = customer.transform.position.y;
 
                 // ROTATE TOWARDS THE WAYPOINT
                 var turnRotation = GetDirectionWayPoint(currentWayPoint);
 
-                while (Vector3.SqrMagnitude(m_Customer.transform.position - currentWayPointFinalPos) > 0.3f * 0.3f)
+                while (Vector3.SqrMagnitude(customer.transform.position - currentWayPointFinalPos) > 0.3f * 0.3f)
                 {
-                    LookAt(turnRotation, m_CustomerData.locomotionData.rotationSpeed);
-                    MoveTo( currentWayPointFinalPos, m_CustomerData.locomotionData.walkSpeed );
+                    LookAt(turnRotation, customerData.locomotionData.rotationSpeed);
+                    MoveTo( currentWayPointFinalPos, customerData.locomotionData.walkSpeed );
                     yield return null;
                 }
                 currentIndex++;
@@ -144,21 +141,22 @@ namespace LHC.Customer.StateMachine
 
         protected Quaternion GetDirectionWayPoint(WayPoint wayPoint) 
         {
-            var dirToWaypoint = (wayPoint.transform.position - m_Customer.transform.position).normalized;
+            var dirToWaypoint = (wayPoint.transform.position - customer.transform.position).normalized;
             var targetAngle = 90 - Mathf.Atan2(dirToWaypoint.z, dirToWaypoint.x) * Mathf.Rad2Deg;
             return Quaternion.Euler(Vector3.up * targetAngle);
         }
 
         protected float GetDirectionWayPointAngle(WayPoint wayPoint) 
         {
-            var dirToWaypoint = (wayPoint.transform.position - m_Customer.transform.position).normalized;
+            var dirToWaypoint = (wayPoint.transform.position - customer.transform.position).normalized;
             var targetAngle = 90 - Mathf.Atan2(dirToWaypoint.z, dirToWaypoint.x) * Mathf.Rad2Deg;
             return targetAngle;
         }
 
         protected bool HasReachedTargetPosition( Vector3 targetPos )
         {
-            return Vector3.SqrMagnitude( m_Customer.transform.position - targetPos ) < 0.2f * 0.2f;
+            return customer.NavController.remainingDistance <= .2f;
+            // return Vector3.SqrMagnitude( customer.transform.position - targetPos ) < 0.2f * 0.2f;
         }
     }
 }

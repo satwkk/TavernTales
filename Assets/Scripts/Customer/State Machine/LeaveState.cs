@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace LHC.Customer.StateMachine
 {
@@ -14,16 +15,15 @@ namespace LHC.Customer.StateMachine
             Debug.Log("Entering leave state");
 
             // START THE WALKING ANIMATION
-            m_Customer.AnimationManager.PlayWalkingAnimation(true);
-
-            m_Customer.StartCoroutine(NavMeshMoveTo(WayPointManager.instance.approachShopWayPoint[0].transform.position,
-            m_CustomerData.locomotionData.walkSpeed, 3, OnLeaveShop));
+            customer.AnimationManager.PlayWalkingAnimation(true);
+            customer.StartCoroutine(NavMeshMoveToCoro(WayPointManager.instance.approachShopWayPoint[0].transform.position,
+            customerData.locomotionData.walkSpeed, 3, OnLeaveShop));
         }
 
         private void OnLeaveShop()
         {
             Debug.Log("Leaving shop successfull");
-            SwitchState(m_Customer.IdleState);
+            SwitchState(customer.IdleState);
         }
 
         public override void OnExit()

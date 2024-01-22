@@ -26,20 +26,20 @@ namespace LHC.Customer.StateMachine
 
         public override void OnEnter()
         {
-            m_Customer.AnimationManager.OnPickupAttachDurationReached += OnPickupAttachDurationReached; 
+            customer.AnimationManager.OnPickupAttachDurationReached += OnPickupAttachDurationReached; 
             CookedIngredientServingZone.OnCookedIngredientPlaced += OnCookedIngredientPlaced;
         }
 
         private void OnPickupAttachDurationReached()
         {
-            CookedOrder.transform.SetParent(m_Customer.PickupSocket);
-            CookedOrder.transform.position = m_Customer.PickupSocket.position;
+            CookedOrder.transform.SetParent(customer.PickupSocket);
+            CookedOrder.transform.position = customer.PickupSocket.position;
         }
 
         private void OnCookedIngredientPlaced(CookedIngredient cookedOrder)
         {
             CookedOrder = cookedOrder;
-            m_Customer.AnimationManager.PlayPickupAnimation(true, OnPickupComplete);
+            customer.AnimationManager.PlayPickupAnimation(true, OnPickupComplete);
         }
 
         private void OnPickupComplete()
@@ -53,18 +53,19 @@ namespace LHC.Customer.StateMachine
             Seat = SittingTable.GetSeatForCustomer();
 
             // SET THE TARGET POSITION AND PLAY THE WALKING ANIMATION
-            m_Customer.AnimationManager.PlayWalkingAnimation(true);
+            customer.AnimationManager.PlayWalkingAnimation(true);
             TargetPosition = Seat.SeatingOffsetTransform.position;
 
-            m_Customer.StartCoroutine(NavMeshMoveTo(TargetPosition, m_CustomerData.locomotionData.walkSpeed, 3, OnReachSit));
+            customer.StartCoroutine(NavMeshMoveToCoro(TargetPosition, customerData.locomotionData.walkSpeed, 3, OnReachSit));
             
             // AFTER PICKUP COMPLETE UNSUBSCRIBE FROM THE ANIMATION EVENT
-            m_Customer.AnimationManager.OnPickupAttachDurationReached -= OnPickupAttachDurationReached; 
+            customer.AnimationManager.OnPickupAttachDurationReached -= OnPickupAttachDurationReached; 
+            CookedIngredientServingZone.OnCookedIngredientPlaced -= OnCookedIngredientPlaced;
         }
 
         public override void OnExit()
         {
-            m_Customer.NavController.enabled = true;
+            customer.NavController.enabled = true;
         }
 
         public override void OnTick()
@@ -73,23 +74,23 @@ namespace LHC.Customer.StateMachine
         private void OnReachSit()
         {
             // DISABLE THE NAVMESH TO DISABLE COLLISION WITH THE CHAIR
-            m_Customer.NavController.ResetPath();
-            m_Customer.NavController.enabled = false;
+            customer.NavController.ResetPath();
+            customer.NavController.enabled = false;
 
             // STOP THE WALKING ANIMATION
-            m_Customer.AnimationManager.PlayWalkingAnimation(false);
+            customer.AnimationManager.PlayWalkingAnimation(false);
             
             // SIT ON THE CHAIR
-            Seat.Sit(m_Customer, OnSitOnSeat);
+            Seat.Sit(customer, OnSitOnSeat);
         }
 
         private void OnSitOnSeat()
         {
             // ENABLE THE EATING LAYER 
-            m_Customer.AnimationManager.Animator.SetLayerWeight(Constants.EATING_ANIMATION_LAYER, 1f);
+            customer.AnimationManager.Animator.SetLayerWeight(Constants.EATING_ANIMATION_LAYER, 1f);
 
             // START EATING TIMER
-            m_Customer.StartCoroutine(EatFoodTimer());
+            customer.StartCoroutine(EatFoodTimer());
         }
 
         private IEnumerator EatFoodTimer()
@@ -116,7 +117,7 @@ namespace LHC.Customer.StateMachine
             if (CurrentEatingTimer >= RandomEatingTimer)
             {
                 // TODO: This isn't working maybe reset the trigger in a animationstateinfo script or use boolean
-                m_Customer.AnimationManager.Animator.SetTrigger(Constants.EATING_ANIMATION_TRIGGER_CONDITION);
+                customer.AnimationManager.Animator.SetTrigger(Constants.EATING_ANIMATION_TRIGGER_CONDITION);
                 CurrentEatingTimer = 0f;
                 RandomEatingTimer = Random.Range(1, 5);
             }
@@ -131,18 +132,21 @@ namespace LHC.Customer.StateMachine
             Debug.LogWarning("Cleaning up");
 
             // DESTROY THE COOKED INGREDIENT INSTANCE
-            GameObject.Destroy(CookedOrder.gameObject);
+            Object.Destroy(CookedOrder.OriginalIngredient);
+            Object.Destroy(CookedOrder.OriginalIngredient.gameObject);
+            Object.Destroy(CookedOrder);
+            Object.Destroy(CookedOrder.gameObject);
 
             // STOP THE FOOD HOLD ANIMATION
-            m_Customer.AnimationManager.Animator.SetLayerWeight(Constants.EATING_ANIMATION_LAYER, 0f);
-            m_Customer.AnimationManager.Animator.SetLayerWeight(Constants.PICKUP_ANIMATION_LAYER, 0f);
-            m_Customer.AnimationManager.Animator.SetBool(Constants.PICKUP_ANIMATION_TRIGGER_CONDITION, false);
+            customer.AnimationManager.Animator.SetLayerWeight(Constants.EATING_ANIMATION_LAYER, 0f);
+            customer.AnimationManager.Animator.SetLayerWeight(Constants.PICKUP_ANIMATION_LAYER, 0f);
+            customer.AnimationManager.Animator.SetBool(Constants.PICKUP_ANIMATION_TRIGGER_CONDITION, false);
 
             // STAND UP
-            m_Customer.AnimationManager.Animator.SetBool(Constants.SITTING_ANIMATION_TRIGGER_CONDITION, false);
+            customer.AnimationManager.Animator.SetBool(Constants.SITTING_ANIMATION_TRIGGER_CONDITION, false);
 
             // LEAVE THE SHOP
-            SwitchState(m_Customer.LeaveState);
+            SwitchState(customer.LeaveState);
         }
     }
 }
