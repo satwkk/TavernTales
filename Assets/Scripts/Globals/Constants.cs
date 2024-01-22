@@ -8,6 +8,7 @@ namespace LHC.Globals
         public const string SHOP_ENTRY_SOCKET = "Shop Entry";
         public const string SHOP_ENTRY_SOCKET_DEBUG = "SKT_Shop_Entry_Debug";
         public const string ORDERING_ZONE_SOCKET = "SKT_Ordering_Food_Location";
+        public const string BIRDS_FLYING_ZONE = "Birds_Flying_Zone";
 
         public const string HIP_RAYCAST_TRANSFORM = "SKT_Sitting_Raycast";
 
